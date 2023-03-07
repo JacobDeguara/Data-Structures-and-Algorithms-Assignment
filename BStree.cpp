@@ -15,7 +15,7 @@ class BStree
 {
 private:
     struct BSnode *root;
-    void Displaytree2(struct BSnode *root, int n);
+    void Displaytree2(struct BSnode *root, int height, vector<bool> DispLine);
 
 public:
     struct BSnode *Create_New_Node(int data);
@@ -100,36 +100,51 @@ BStree::~BStree()
 void BStree::Displaytree(struct BSnode *root)
 {
     cout << "0>" << root->data << endl;
+    vector<bool> Disp;
 
     if (root->right != NULL)
     {
-        Displaytree2(root->right, 0);
+        Disp.push_back(true);
+        Displaytree2(root->right, 0, Disp);
+        Disp.pop_back();
     }
     if (root->left != NULL)
     {
-        Displaytree2(root->left, 0);
+        Disp.push_back(false);
+        Displaytree2(root->left, 0, Disp);
+        Disp.pop_back();
     }
     return;
 }
 
-void BStree::Displaytree2(struct BSnode *root, int height)
+void BStree::Displaytree2(struct BSnode *root, int height, vector<bool> DispLine)
 {
-    cout << " ";
 
     for (size_t i = 0; i < (height); i++)
     {
-        cout << "|";
+        if (DispLine[i] == true)
+        {
+            cout << "|";
+        }
+        else
+        {
+            cout << " ";
+        }
     }
 
-    cout << "0>" << root->data << endl;
+    cout << "L0>" << root->data << endl;
 
     if (root->right != NULL)
     {
-        Displaytree2(root->right, height + 1);
+        DispLine.push_back(true);
+        Displaytree2(root->right, height + 1, DispLine);
+        DispLine.pop_back();
     }
     if (root->left != NULL)
     {
-        Displaytree2(root->left, height + 1);
+        DispLine.push_back(false);
+        Displaytree2(root->left, height + 1, DispLine);
+        DispLine.pop_back();
     }
     return;
 }
