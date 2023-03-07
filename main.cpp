@@ -8,6 +8,15 @@
 #include "AVLtree.cpp"
 #include "RBtree.cpp"
 
+bool compare(int x, int y)
+{
+    if (x == y)
+    {
+        return true;
+    }
+    return false;
+}
+
 int main()
 {
     std::random_device dev;
@@ -16,7 +25,7 @@ int main()
 
     vector<int> ListX;
 
-    for (size_t i = 0; i < 50; i++)
+    for (size_t i = 0; i < 25; i++)
     {
         ListX.push_back(dist6(rng));
     }
@@ -35,6 +44,10 @@ int main()
     // RBtree rbTree = RBtree(12);
 
     BStree bsTree = BStree(ListX);
+
+    bsTree.Displaytree(bsTree.get_Root());
+
+    auto NEWROOT = bsTree.Delete_From_List(bsTree.get_Root(), ListX);
 
     bsTree.Displaytree(bsTree.get_Root());
 

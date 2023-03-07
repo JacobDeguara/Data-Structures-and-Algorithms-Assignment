@@ -1,28 +1,29 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 using namespace std;
 
 struct BSnode
 {
     int data;
-    struct BSnode *left;
-    struct BSnode *right;
+    shared_ptr<struct BSnode> left;
+    shared_ptr<struct BSnode> right;
 };
 
 class BStree
 {
 private:
     /* Head node */
-    struct BSnode *root;
+    shared_ptr<struct BSnode> root;
 
     /* Recursive Display with Parameters sone in Displaytree() */
-    void Displaytree2(struct BSnode *root, int height, vector<bool> DispLine);
+    void Displaytree2(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine);
 
 public:
     /* Returns a newly created a node */
-    struct BSnode *Create_New_Node(int data);
+    shared_ptr<struct BSnode> Create_New_Node(int data);
 
     /* Constructers that create a tree at root in class */
     BStree(int HeadData);
@@ -30,53 +31,33 @@ public:
     BStree(vector<int> ListData);
 
     /* Deletes root node */
-    struct BSnode *Delete_Node(struct BSnode *root);
-    /* Deletes entire tree from root */
-    void Delete_Tree(struct BSnode *root);
+    shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root);
 
     /* Destructer */
     ~BStree();
 
     /* Insert new node from head tree */
-    struct BSnode *Insert_New_Node(struct BSnode *root, int data);
+    shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
 
-    /* Returns the new tree with one function for comparison and one function for application*/
-    struct BSnode *Func_Apply(struct BSnode *root, bool (*comp)(int, int), struct BSnode *(*apply)(struct BSnode *))
+    /* Returns the new tree */
+    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, vector<int> Remove);
 
-        /* Displays the tree */
-        void Displaytree(struct BSnode *root);
+    /* Displays the tree */
+    void Displaytree(shared_ptr<struct BSnode> root);
 
     /* Returns the head node*/
-    struct BSnode *get_Root();
+    shared_ptr<struct BSnode> get_Root();
 
     /* Sets the current Head node to whats passed*/
-    void set_Root(struct BSnode *root);
+    void set_Root(shared_ptr<struct BSnode> root);
 };
 
-struct BSnode *BStree::Create_New_Node(int data)
+shared_ptr<struct BSnode> BStree::Create_New_Node(int data)
 {
-    struct BSnode *temp = (struct BSnode *)malloc(sizeof(struct BSnode));
+    shared_ptr<struct BSnode> temp = make_shared<struct BSnode>();
     temp->data = data;
     temp->left = temp->right = NULL;
     return temp;
-}
-
-void BStree::Delete_Tree(struct BSnode *root)
-{
-    if (root == NULL)
-        return;
-
-    if (root->right != NULL)
-    {
-        Delete_Tree(root->right);
-    }
-
-    if (root->left != NULL)
-    {
-        Delete_Tree(root->left);
-    }
-
-    free(root);
 }
 
 BStree::BStree(int HeadData)
@@ -94,7 +75,7 @@ BStree::BStree(vector<int> ListData)
     }
 }
 
-struct BSnode *BStree::Insert_New_Node(struct BSnode *root, int data)
+shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root, int data)
 {
     if (root == NULL)
     {
@@ -114,11 +95,10 @@ struct BSnode *BStree::Insert_New_Node(struct BSnode *root, int data)
     return root;
 }
 
-struct BSnode *BStree::Delete_Node(struct BSnode *root)
+shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
 {
     if (root->right == NULL && root->left == NULL)
     {
-        free(root);
         return NULL;
     }
 
@@ -127,26 +107,52 @@ struct BSnode *BStree::Delete_Node(struct BSnode *root)
         auto rootLeft = root->left;
         rootLeft->right = root->right;
         rootLeft->left = Delete_Node(root->left);
-        free(root);
         return rootLeft;
     }
 
     if (root->right == NULL)
     {
         auto rootLeft = root->left;
-        free(root);
         return rootLeft;
     }
     else
     {
         auto rootRight = root->right;
-        free(root);
         return rootRight;
     }
 }
 
-void BStree::Displaytree(struct BSnode *root)
+shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, vector<int> Remove)
 {
+    if (root->left != NULL)
+    {
+        Delete_From_List(root->left, Remove);
+    }
+
+    if (root->right != NULL)
+    {
+        Delete_From_List(root->right, Remove);
+    }
+
+    for (size_t i = 0; i < Remove.size(); i++)
+    {
+        if (Remove[i] == root->data)
+        {
+            root = Delete_Node(root);
+        }
+    }
+
+    return root;
+}
+
+void BStree::Displaytree(shared_ptr<struct BSnode> root)
+{
+    if (root == NULL)
+    {
+        cout << "Empty Tree" << endl;
+        return;
+    }
+
     cout << "0>" << root->data << endl;
     vector<bool> Disp;
 
@@ -165,7 +171,7 @@ void BStree::Displaytree(struct BSnode *root)
     return;
 }
 
-void BStree::Displaytree2(struct BSnode *root, int height, vector<bool> DispLine)
+void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine)
 {
 
     for (size_t i = 0; i < (height); i++)
@@ -197,17 +203,16 @@ void BStree::Displaytree2(struct BSnode *root, int height, vector<bool> DispLine
     return;
 }
 
-void BStree::set_Root(struct BSnode *root)
+void BStree::set_Root(shared_ptr<struct BSnode> root)
 {
     this->root = root;
 }
 
-struct BSnode *BStree::get_Root()
+shared_ptr<struct BSnode> BStree::get_Root()
 {
     return root;
 }
 
 BStree::~BStree()
 {
-    Delete_Tree(root);
 }
