@@ -99,7 +99,7 @@ BStree::~BStree()
 
 void BStree::Displaytree(struct BSnode *root)
 {
-    cout << L"▷" << root->data << endl;
+    cout << "0>" << root->data << endl;
 
     if (root->right != NULL)
     {
@@ -114,12 +114,14 @@ void BStree::Displaytree(struct BSnode *root)
 
 void BStree::Displaytree2(struct BSnode *root, int height)
 {
+    cout << " ";
+
     for (size_t i = 0; i < (height); i++)
     {
-        cout << " ";
+        cout << "|";
     }
 
-    cout << L"┗▷" << root->data << endl;
+    cout << "0>" << root->data << endl;
 
     if (root->right != NULL)
     {
