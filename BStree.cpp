@@ -40,7 +40,7 @@ public:
     shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
 
     /* Returns the new tree */
-    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, vector<int> Remove);
+    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, int Remove);
 
     /* Displays the tree */
     void Displaytree(shared_ptr<struct BSnode> root);
@@ -83,7 +83,7 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
         return root;
     }
 
-    if (root->data < data)
+    if (root->data < data) // flip this < to this >
     {
         root->left = Insert_New_Node(root->left, data);
     }
@@ -104,25 +104,26 @@ shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
 
     if (root->right != NULL && root->left != NULL)
     {
-        auto rootLeft = root->left;
-        rootLeft->right = root->right;
-        rootLeft->left = Delete_Node(root->left);
-        return rootLeft;
+        root->data = root->left->data;
+        root->left = Delete_Node(root->left);
+        return root;
     }
 
     if (root->right == NULL)
     {
-        auto rootLeft = root->left;
-        return rootLeft;
+        root->data = root->left->data;
+        root->left = NULL;
+        return root;
     }
     else
     {
-        auto rootRight = root->right;
-        return rootRight;
+        root->data = root->right->data;
+        root->right = NULL;
+        return root;
     }
 }
 
-shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, vector<int> Remove)
+shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, int Remove)
 {
     if (root->left != NULL)
     {
@@ -134,14 +135,13 @@ shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> roo
         Delete_From_List(root->right, Remove);
     }
 
-    for (size_t i = 0; i < Remove.size(); i++)
+    if (root != NULL)
     {
-        if (Remove[i] == root->data)
+        if (Remove == root->data)
         {
             root = Delete_Node(root);
         }
     }
-
     return root;
 }
 
@@ -186,7 +186,16 @@ void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<boo
         }
     }
 
-    cout << "L0>" << root->data << endl;
+    if (DispLine[DispLine.size() - 1] == true)
+    {
+        cout << "R";
+    }
+    else
+    {
+        cout << "L";
+    }
+
+    cout << "0>" << root->data << endl;
 
     if (root->right != NULL)
     {

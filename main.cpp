@@ -20,34 +20,56 @@ bool compare(int x, int y)
 int main()
 {
     std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(-3000, 3000);
+    std::mt19937 rngX(dev());
+    std::mt19937 rngY(dev());
+    std::mt19937 rngZ(dev());
+    std::mt19937 rngSize(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist33(-3000, 3000);
+    std::uniform_int_distribution<std::mt19937::result_type> dist13(1000, 3000);
+    std::uniform_int_distribution<std::mt19937::result_type> dist51(500, 1000);
 
     vector<int> ListX;
+    vector<int> ListY;
+    vector<int> ListZ;
 
-    for (size_t i = 0; i < 25; i++)
+    for (size_t i = 0; i < dist13(rngSize); i++)
     {
-        ListX.push_back(dist6(rng));
+        ListX.push_back(dist33(rngX));
+    }
+    for (size_t i = 0; i < dist51(rngSize); i++)
+    {
+        ListX.push_back(dist33(rngY));
+    }
+    for (size_t i = 0; i < dist51(rngSize); i++)
+    {
+        ListX.push_back(dist33(rngZ));
     }
 
-    random_shuffle(ListX.begin(), ListX.end());
-
     auto Xtest = std::adjacent_find(ListX.begin(), ListX.end());
+    auto Ytest = std::adjacent_find(ListY.begin(), ListY.end());
+    auto Ztest = std::adjacent_find(ListZ.begin(), ListZ.end());
 
     if (Xtest != ListX.end())
     {
-        cout << "Duplicate elements Found";
+        cout << "Duplicate elements Found in List X";
+        return 0;
+    }
+
+    if (Ytest != ListY.end())
+    {
+        cout << "Duplicate elements Found in List Y";
+        return 0;
+    }
+
+    if (Ztest != ListZ.end())
+    {
+        cout << "Duplicate elements Found in List Z";
         return 0;
     }
 
     // AVLtree avlTree = AVLtree(12);
     // RBtree rbTree = RBtree(12);
-
     BStree bsTree = BStree(ListX);
-
-    bsTree.Displaytree(bsTree.get_Root());
-
-    auto NEWROOT = bsTree.Delete_From_List(bsTree.get_Root(), ListX);
 
     bsTree.Displaytree(bsTree.get_Root());
 
