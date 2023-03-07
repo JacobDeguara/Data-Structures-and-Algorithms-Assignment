@@ -212,7 +212,3 @@ shared_ptr<struct BSnode> BStree::get_Root()
 {
     return root;
 }
-
-BStree::~BStree()
-{
-}
