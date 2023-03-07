@@ -27,6 +27,8 @@ public:
 
     struct BSnode *Insert_New_Node(struct BSnode *root, int data);
     void Displaytree(struct BSnode *root);
+
+    struct BSnode *get_Root();
 };
 
 struct BSnode *BStree::Create_New_Node(int data)
@@ -66,7 +68,7 @@ BStree::BStree(vector<int> ListData)
 
     for (size_t i = 1; i < ListData.size(); i++)
     {
-        // insert New Nodes;
+        root = Insert_New_Node(root, ListData[i]);
     }
 }
 
@@ -128,4 +130,9 @@ void BStree::Displaytree2(struct BSnode *root, int height)
         Displaytree2(root->left, height + 1);
     }
     return;
+}
+
+struct BSnode *BStree::get_Root()
+{
+    return root;
 }
