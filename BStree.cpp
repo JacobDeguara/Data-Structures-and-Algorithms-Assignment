@@ -14,9 +14,9 @@ class BStree
 {
 private:
     struct BSnode *root;
-    struct BSnode *BStree::Create_New_Node(int data);
 
 public:
+    struct BSnode *Create_New_Node(int data);
     BStree(int HeadData);
 
     void Delete_Tree(struct BSnode *root);

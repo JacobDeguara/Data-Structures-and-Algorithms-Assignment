@@ -14,9 +14,9 @@ class AVLtree
 {
 private:
     struct AVLnode *root;
-    struct AVLnode *Create_New_Node(int data);
 
 public:
+    struct AVLnode *Create_New_Node(int data);
     AVLtree(int HeadData);
 
     void Delete_Tree(struct AVLnode *root);

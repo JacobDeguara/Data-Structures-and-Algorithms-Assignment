@@ -20,14 +20,46 @@ struct RBnode
 class RBtree
 {
 private:
-    /* data */
+    struct RBnode *root;
+
 public:
-    RBtree(/* args */);
+    struct RBnode *Create_New_Node(int data, RB Type);
+    RBtree(int data, RB Type);
+
+    void Delete_Tree(struct RBnode *root);
     ~RBtree();
 };
 
-RBtree::RBtree(/* args */)
+struct RBnode *RBtree::Create_New_Node(int data, RB Type)
 {
+    struct RBnode *temp = (struct RBnode *)malloc(sizeof(struct RBnode));
+    temp->data = data;
+    temp->Type = Type;
+    temp->left = temp->right = NULL;
+    return temp;
+}
+
+void RBtree::Delete_Tree(struct RBnode *root)
+{
+    if (root == NULL)
+        return;
+
+    if (root->right != NULL)
+    {
+        Delete_Tree(root->right);
+    }
+
+    if (root->left != NULL)
+    {
+        Delete_Tree(root->left);
+    }
+
+    free(root);
+}
+
+RBtree::RBtree(int data, RB Type)
+{
+    root = Create_New_Node(data, Type);
 }
 
 RBtree::~RBtree()
