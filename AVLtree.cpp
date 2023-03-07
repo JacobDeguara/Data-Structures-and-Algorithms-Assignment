@@ -18,6 +18,8 @@ private:
 
 public:
     AVLtree(int HeadData);
+
+    void Delete_Tree(struct AVLnode *root);
     ~AVLtree();
 };
 
@@ -29,6 +31,24 @@ struct AVLnode *AVLtree::Create_New_Node(int data)
     return temp;
 }
 
+void AVLtree::Delete_Tree(struct AVLnode *root)
+{
+    if (root == NULL)
+        return;
+
+    if (root->right != NULL)
+    {
+        Delete_Tree(root->right);
+    }
+
+    if (root->left != NULL)
+    {
+        Delete_Tree(root->left);
+    }
+
+    free(root);
+}
+
 AVLtree::AVLtree(int HeadData)
 {
     root = Create_New_Node(HeadData);
@@ -36,4 +56,5 @@ AVLtree::AVLtree(int HeadData)
 
 AVLtree::~AVLtree()
 {
+    Delete_Tree(root);
 }
