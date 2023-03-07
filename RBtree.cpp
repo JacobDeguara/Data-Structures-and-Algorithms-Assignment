@@ -64,4 +64,5 @@ RBtree::RBtree(int data, RB Type)
 
 RBtree::~RBtree()
 {
+    Delete_Tree(root);
 }
