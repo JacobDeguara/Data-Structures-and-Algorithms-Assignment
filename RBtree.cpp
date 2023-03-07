@@ -24,7 +24,7 @@ private:
 
 public:
     struct RBnode *Create_New_Node(int data, RB Type);
-    RBtree(int data, RB Type);
+    RBtree(int data);
 
     void Delete_Tree(struct RBnode *root);
     ~RBtree();
@@ -57,9 +57,9 @@ void RBtree::Delete_Tree(struct RBnode *root)
     free(root);
 }
 
-RBtree::RBtree(int data, RB Type)
+RBtree::RBtree(int data)
 {
-    root = Create_New_Node(data, Type);
+    root = Create_New_Node(data, Black);
 }
 
 RBtree::~RBtree()
