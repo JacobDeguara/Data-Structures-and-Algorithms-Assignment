@@ -34,7 +34,7 @@ public:
     shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root);
 
     /* Destructer */
-    ~BStree();
+    ~BStree() = default;
 
     /* Insert new node from head tree */
     shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
