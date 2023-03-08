@@ -104,23 +104,22 @@ shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
 
     if (root->right != NULL && root->left != NULL)
     {
-        auto temp = Create_New_Node(root->left->data);
-        temp->right = root->right;
-        temp->left = Delete_Node(root->left);
-        return temp;
+        root->data = root->left->data;
+        root->left = Delete_Node(root->left);
+        return root;
     }
 
     if (root->right == NULL)
     {
-        auto temp = Create_New_Node(root->left->data);
-        temp->left = Delete_Node(root->left);
-        return temp;
+        root->data = root->left->data;
+        root->left = Delete_Node(root->left);
+        return root;
     }
     else if (root->left == NULL)
     {
-        auto temp = Create_New_Node(root->right->data);
-        temp->right = Delete_Node(root->right);
-        return temp;
+        root->data = root->right->data;
+        root->right = Delete_Node(root->right);
+        return root;
     }
     return NULL;
 }
