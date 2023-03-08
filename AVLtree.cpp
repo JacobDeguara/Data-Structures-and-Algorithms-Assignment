@@ -1,60 +1,37 @@
-#include <stdlib.h>
 #include <iostream>
+#include <vector>
+#include <memory>
 
 using namespace std;
 
 struct AVLnode
 {
     int data;
-    struct AVLnode *left;
-    struct AVLnode *right;
+    shared_ptr<struct AVLnode> left;
+    shared_ptr<struct AVLnode> right;
 };
 
 class AVLtree
 {
 private:
-    struct AVLnode *root;
+    shared_ptr<struct AVLnode> root;
 
 public:
-    struct AVLnode *Create_New_Node(int data);
+    shared_ptr<struct AVLnode> Create_New_Node(int data);
     AVLtree(int HeadData);
 
-    void Delete_Tree(struct AVLnode *root);
-    ~AVLtree();
+    ~AVLtree() = default;
 };
 
-struct AVLnode *AVLtree::Create_New_Node(int data)
+shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
 {
-    struct AVLnode *temp = (struct AVLnode *)malloc(sizeof(struct AVLnode));
+    shared_ptr<struct AVLnode> temp = make_shared<struct AVLnode>();
     temp->data = data;
     temp->left = temp->right = NULL;
     return temp;
 }
 
-void AVLtree::Delete_Tree(struct AVLnode *root)
-{
-    if (root == NULL)
-        return;
-
-    if (root->right != NULL)
-    {
-        Delete_Tree(root->right);
-    }
-
-    if (root->left != NULL)
-    {
-        Delete_Tree(root->left);
-    }
-
-    free(root);
-}
-
 AVLtree::AVLtree(int HeadData)
 {
     root = Create_New_Node(HeadData);
-}
-
-AVLtree::~AVLtree()
-{
-    Delete_Tree(root);
 }
