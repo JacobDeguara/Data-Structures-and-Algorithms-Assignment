@@ -36,14 +36,26 @@ int main()
     for (size_t i = 0; i < dist13(rngSize); i++)
     {
         ListX.push_back(dist33(rngX));
+        while (std::adjacent_find(ListX.begin(), ListX.end()) != ListX.end())
+        {
+            ListX[i] = dist33(rngX);
+        }
     }
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
-        ListX.push_back(dist33(rngY));
+        ListY.push_back(dist33(rngY));
+        while (std::adjacent_find(ListY.begin(), ListY.end()) != ListY.end())
+        {
+            ListY[i] = dist33(rngY);
+        }
     }
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
-        ListX.push_back(dist33(rngZ));
+        ListZ.push_back(dist33(rngZ));
+        while (std::adjacent_find(ListZ.begin(), ListZ.end()) != ListZ.end())
+        {
+            ListZ[i] = dist33(rngZ);
+        }
     }
     for (size_t i = 0; i < 25; i++)
     {
@@ -58,27 +70,25 @@ int main()
 
     if (Xtest != ListX.end())
     {
-        cout << "Duplicate elements Found in List X";
-        return 0;
+        cerr << "Duplicate elements Found in List X";
+        return -1;
     }
 
     if (Ytest != ListY.end())
     {
-        cout << "Duplicate elements Found in List Y";
-        return 0;
+        cerr << "Duplicate elements Found in List Y";
+        return -1;
     }
 
     if (Ztest != ListZ.end())
     {
-        cout << "Duplicate elements Found in List Z";
-        return 0;
+        cerr << "Duplicate elements Found in List Z";
+        return -1;
     }
 
     // AVLtree avlTree = AVLtree(12);
     // RBtree rbTree = RBtree(12);
     BStree bsTree = BStree(Simple);
-
-    bsTree.Displaytree(bsTree.get_Root());
     bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root()));
     bsTree.Displaytree(bsTree.get_Root());
 
