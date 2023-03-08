@@ -83,7 +83,7 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
         return root;
     }
 
-    if (root->data < data) // flip this < to this >
+    if (root->data > data)
     {
         root->left = Insert_New_Node(root->left, data);
     }
@@ -104,23 +104,25 @@ shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
 
     if (root->right != NULL && root->left != NULL)
     {
-        root->data = root->left->data;
-        root->left = Delete_Node(root->left);
-        return root;
+        auto temp = Create_New_Node(root->left->data);
+        temp->right = root->right;
+        temp->left = Delete_Node(root->left);
+        return temp;
     }
 
     if (root->right == NULL)
     {
-        root->data = root->left->data;
-        root->left = NULL;
-        return root;
+        auto temp = Create_New_Node(root->left->data);
+        temp->left = Delete_Node(root->left);
+        return temp;
     }
-    else
+    else if (root->left == NULL)
     {
-        root->data = root->right->data;
-        root->right = NULL;
-        return root;
+        auto temp = Create_New_Node(root->right->data);
+        temp->right = Delete_Node(root->right);
+        return temp;
     }
+    return NULL;
 }
 
 shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, int Remove)

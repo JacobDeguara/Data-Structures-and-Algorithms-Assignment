@@ -31,6 +31,7 @@ int main()
     vector<int> ListX;
     vector<int> ListY;
     vector<int> ListZ;
+    vector<int> Simple;
 
     for (size_t i = 0; i < dist13(rngSize); i++)
     {
@@ -44,6 +45,12 @@ int main()
     {
         ListX.push_back(dist33(rngZ));
     }
+    for (size_t i = 0; i < 25; i++)
+    {
+        Simple.push_back(i);
+    }
+
+    shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
     auto Xtest = std::adjacent_find(ListX.begin(), ListX.end());
     auto Ytest = std::adjacent_find(ListY.begin(), ListY.end());
@@ -69,8 +76,10 @@ int main()
 
     // AVLtree avlTree = AVLtree(12);
     // RBtree rbTree = RBtree(12);
-    BStree bsTree = BStree(ListX);
+    BStree bsTree = BStree(Simple);
 
+    bsTree.Displaytree(bsTree.get_Root());
+    bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root()));
     bsTree.Displaytree(bsTree.get_Root());
 
     return 0;
