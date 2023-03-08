@@ -7,6 +7,7 @@ using namespace std;
 struct AVLnode
 {
     int data;
+    int height;
     shared_ptr<struct AVLnode> left;
     shared_ptr<struct AVLnode> right;
 };
@@ -25,6 +26,9 @@ public:
     shared_ptr<struct AVLnode> RLRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> LRRotation(shared_ptr<struct AVLnode> root);
 
+    int Check_Height(shared_ptr<struct AVLnode> root);
+    int Check_Balance(shared_ptr<struct AVLnode> root);
+
     shared_ptr<struct AVLnode> getRoot();
     ~AVLtree() = default;
 };
@@ -33,6 +37,7 @@ shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
 {
     shared_ptr<struct AVLnode> temp = make_shared<struct AVLnode>();
     temp->data = data;
+    temp->height = 1;
     temp->left = temp->right = NULL;
     return temp;
 }
@@ -65,6 +70,20 @@ shared_ptr<struct AVLnode> AVLtree::LRRotation(shared_ptr<struct AVLnode> root)
 {
     root->left = RRRotation(root->left);
     return LLRotation(root);
+}
+
+int AVLtree::Check_Height(shared_ptr<struct AVLnode> root)
+{
+    if (root == NULL)
+        return 0;
+    return root->height;
+}
+
+int AVLtree::Check_Balance(shared_ptr<struct AVLnode> root)
+{
+    if (root = NULL)
+        return 0;
+    return Check_Height(root->left) - Check_Height(root->right);
 }
 
 shared_ptr<struct AVLnode> AVLtree::getRoot()
