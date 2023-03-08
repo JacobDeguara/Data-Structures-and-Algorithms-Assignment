@@ -27,7 +27,7 @@ private:
 
 public:
     shared_ptr<struct AVLnode> Create_New_Node(int data);
-    shared_ptr<struct AVLnode> Copy_Node(shared_ptr<struct AVLnode> root);
+
     AVLtree(int HeadData);
     AVLtree(vector<int> ListData);
 
@@ -43,23 +43,6 @@ shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
     temp->data = data;
     temp->height = 1;
     temp->left = temp->right = NULL;
-    return temp;
-}
-
-shared_ptr<struct AVLnode> AVLtree::Copy_Node(shared_ptr<struct AVLnode> root)
-{
-    shared_ptr<struct AVLnode> temp = make_shared<struct AVLnode>();
-    if (root == NULL)
-    {
-        cout << "NULL ROOT!" << endl;
-    }
-    else
-    {
-        temp->data = root->data;
-        temp->height = root->height;
-        temp->left = root->left;
-        temp->right = root->right;
-    }
     return temp;
 }
 
@@ -125,7 +108,7 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
 
 shared_ptr<struct AVLnode> AVLtree::LLRotation(shared_ptr<struct AVLnode> root)
 {
-    auto rootLeft = Copy_Node(root->left);
+    auto rootLeft = root->left;
     root->left = rootLeft->right;
     rootLeft->right = root;
     root->height = max(Check_Height(root->left), Check_Height(root->right)) + 1;
@@ -134,7 +117,7 @@ shared_ptr<struct AVLnode> AVLtree::LLRotation(shared_ptr<struct AVLnode> root)
 }
 shared_ptr<struct AVLnode> AVLtree::RRRotation(shared_ptr<struct AVLnode> root)
 {
-    auto rootRight = Copy_Node(root->right);
+    auto rootRight = root->right;
     root->right = rootRight->left;
     rootRight->left = root;
     root->height = max(Check_Height(root->left), Check_Height(root->right)) + 1;
