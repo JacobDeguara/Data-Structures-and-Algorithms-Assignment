@@ -45,6 +45,9 @@ public:
     /* Displays the tree */
     void Displaytree(shared_ptr<struct BSnode> root);
 
+    /* Displays the Data in the tree in order */
+    void in_Order(shared_ptr<struct BSnode> root);
+
     /* Returns the head node*/
     shared_ptr<struct BSnode> get_Root();
 
@@ -211,6 +214,21 @@ void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<boo
         DispLine.pop_back();
     }
     return;
+}
+
+void BStree::in_Order(shared_ptr<struct BSnode> root)
+{
+    if (root->left != NULL)
+    {
+        in_Order(root->left);
+    }
+
+    cout << root->data << ", ";
+
+    if (root->right != NULL)
+    {
+        in_Order(root->right);
+    }
 }
 
 void BStree::set_Root(shared_ptr<struct BSnode> root)
