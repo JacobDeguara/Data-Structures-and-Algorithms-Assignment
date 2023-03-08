@@ -96,6 +96,7 @@ int main()
     */
 
     AVLtree avlTree = AVLtree(Simple);
+    avlTree.in_Order(avlTree.getRoot());
 
     return 0;
 }

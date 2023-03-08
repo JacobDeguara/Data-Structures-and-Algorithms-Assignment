@@ -35,6 +35,8 @@ public:
 
     shared_ptr<struct AVLnode> getRoot();
     ~AVLtree() = default;
+
+    void in_Order(shared_ptr<struct AVLnode> root);
 };
 
 shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
@@ -147,6 +149,21 @@ int AVLtree::Check_Balance(shared_ptr<struct AVLnode> root)
     if (root == NULL)
         return 0;
     return Check_Height(root->left) - Check_Height(root->right);
+}
+
+void AVLtree::in_Order(shared_ptr<struct AVLnode> root)
+{
+    if (root->left != NULL)
+    {
+        in_Order(root->left);
+    }
+
+    cout << root->data << ", ";
+
+    if (root->right != NULL)
+    {
+        in_Order(root->right);
+    }
 }
 
 shared_ptr<struct AVLnode> AVLtree::getRoot()
