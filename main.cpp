@@ -86,12 +86,16 @@ int main()
         return -1;
     }
 
-    // AVLtree avlTree = AVLtree(12);
     // RBtree rbTree = RBtree(12);
+
+    /*
     BStree bsTree = BStree(Simple);
     bsTree.in_Order(bsTree.get_Root());
     bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root()));
     bsTree.in_Order(bsTree.get_Root());
+    */
+
+    AVLtree avlTree = AVLtree(Simple);
 
     return 0;
 }
