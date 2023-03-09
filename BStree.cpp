@@ -54,12 +54,15 @@ public:
 
     /* Sets the current Head node to whats passed*/
     void set_Root(shared_ptr<struct BSnode> root);
+
+    int Check_Height(shared_ptr<struct BSnode> root);
 };
 
 shared_ptr<struct BSnode> BStree::Create_New_Node(int data)
 {
     shared_ptr<struct BSnode> temp = make_shared<struct BSnode>();
     temp->data = data;
+    temp->height = 1;
     temp->left = temp->right = NULL;
     return temp;
 }
@@ -83,8 +86,7 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
 {
     if (root == NULL)
     {
-        root = Create_New_Node(data);
-        return root;
+        return (Create_New_Node(data));
     }
 
     if (root->data > data)
@@ -95,6 +97,8 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
     {
         root->right = Insert_New_Node(root->right, data);
     }
+
+    root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
 
     return root;
 }
@@ -142,6 +146,13 @@ shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> roo
         }
     }
     return root;
+}
+
+int BStree::Check_Height(shared_ptr<struct BSnode> root)
+{
+    if (root == NULL)
+        return 0;
+    return root->height;
 }
 
 void BStree::Displaytree(shared_ptr<struct BSnode> root)
