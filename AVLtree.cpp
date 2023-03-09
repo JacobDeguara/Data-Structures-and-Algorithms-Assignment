@@ -22,7 +22,7 @@ private:
     shared_ptr<struct AVLnode> RLRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> LRRotation(shared_ptr<struct AVLnode> root);
 
-        int Check_Balance(shared_ptr<struct AVLnode> root);
+    int Check_Balance(shared_ptr<struct AVLnode> root);
 
     void Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
     void in_Order2(shared_ptr<struct AVLnode> root);
@@ -34,7 +34,9 @@ public:
     AVLtree(vector<int> ListData);
 
     shared_ptr<struct AVLnode> Insert_Node(shared_ptr<struct AVLnode> root, int data);
+    shared_ptr<struct AVLnode> Delete_Node(shared_ptr<struct AVLnode> root, int data);
     int Check_Height(shared_ptr<struct AVLnode> root);
+    shared_ptr<struct AVLnode> MinValue_Node_Search(shared_ptr<struct AVLnode> node);
 
     shared_ptr<struct AVLnode> getRoot();
     ~AVLtree() = default;
@@ -84,6 +86,74 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
         return root;
     }
 
+    // Update balance
+    root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
+    int balance = Check_Balance(root);
+
+    if (balance > 1)
+    {
+        if (data < root->left->data)
+        {
+            return LLRotation(root);
+        }
+        else if (data > root->left->data)
+        {
+            return LRRotation(root);
+        }
+    }
+    if (balance < -1)
+    {
+        if (data > root->right->data)
+        {
+            return RRRotation(root);
+        }
+        else if (data < root->right->data)
+        {
+            return RLRotation(root);
+        }
+    }
+    return root;
+}
+
+shared_ptr<struct AVLnode> AVLtree::MinValue_Node_Search(shared_ptr<struct AVLnode> node)
+{
+    auto current = node;
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root, int data)
+{
+    if (root == NULL)
+        return root;
+    if (data < root->data)
+        root->left = Delete_Node(root->left, data);
+    else if (data > root->data)
+        root->right = Delete_Node(root->right, data);
+    else
+    {
+        if ((root->left == NULL) && (root->right == NULL))
+        {
+            root = NULL;
+        }
+        else if ((root->left == NULL) || (root->right == NULL))
+        {
+            auto temp = root->left ? root->left : root->right;
+            root = temp;
+        }
+        else
+        {
+            auto temp = MinValue_Node_Search(root->right); // min?
+            root->data = temp->data;
+            root->right = Delete_Node(root->right, temp->data);
+        }
+    }
+
+    if (root == NULL)
+        return root;
+
+    // Update balance
     root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
     int balance = Check_Balance(root);
 

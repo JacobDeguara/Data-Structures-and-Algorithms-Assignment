@@ -91,6 +91,7 @@ int main()
     BStree bsTree = BStree(Simple);
     bsTree.in_Order(bsTree.get_Root());
     bsTree.Displaytree(bsTree.get_Root());
+    cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
     /*
     bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root()));
     bsTree.in_Order(bsTree.get_Root());
@@ -99,6 +100,7 @@ int main()
     AVLtree avlTree = AVLtree(Simple);
     avlTree.in_Order(avlTree.getRoot());
     avlTree.Displaytree(avlTree.getRoot());
-    cout << avlTree.Check_Height(avlTree.getRoot());
+    cout << "Height :" << avlTree.Check_Height(avlTree.getRoot()) << endl;
+
     return 0;
 }
