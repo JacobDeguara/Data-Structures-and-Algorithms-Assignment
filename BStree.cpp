@@ -19,6 +19,7 @@ private:
 
     /* Recursive Display with Parameters sone in Displaytree() */
     void Displaytree2(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine);
+    void in_Order2(shared_ptr<struct BSnode> root);
 
 public:
     /* Returns a newly created a node */
@@ -211,16 +212,23 @@ void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<boo
 
 void BStree::in_Order(shared_ptr<struct BSnode> root)
 {
+    cout << "List;" << endl;
+    in_Order2(root);
+    cout << endl;
+}
+
+void BStree::in_Order2(shared_ptr<struct BSnode> root)
+{
     if (root->left != NULL)
     {
-        in_Order(root->left);
+        in_Order2(root->left);
     }
 
     cout << root->data << ", ";
 
     if (root->right != NULL)
     {
-        in_Order(root->right);
+        in_Order2(root->right);
     }
 }
 

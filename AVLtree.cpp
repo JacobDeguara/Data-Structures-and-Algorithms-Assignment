@@ -25,6 +25,9 @@ private:
     int Check_Height(shared_ptr<struct AVLnode> root);
     int Check_Balance(shared_ptr<struct AVLnode> root);
 
+    void Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
+    void in_Order2(shared_ptr<struct AVLnode> root);
+
 public:
     shared_ptr<struct AVLnode> Create_New_Node(int data);
 
@@ -36,6 +39,7 @@ public:
     shared_ptr<struct AVLnode> getRoot();
     ~AVLtree() = default;
 
+    void Displaytree(shared_ptr<struct AVLnode> root);
     void in_Order(shared_ptr<struct AVLnode> root);
 };
 
@@ -153,17 +157,91 @@ int AVLtree::Check_Balance(shared_ptr<struct AVLnode> root)
 
 void AVLtree::in_Order(shared_ptr<struct AVLnode> root)
 {
+    cout << "List;" << endl;
+    in_Order2(root);
+    cout << endl;
+}
+
+void AVLtree::in_Order2(shared_ptr<struct AVLnode> root)
+{
     if (root->left != NULL)
     {
-        in_Order(root->left);
+        in_Order2(root->left);
     }
 
     cout << root->data << ", ";
 
     if (root->right != NULL)
     {
-        in_Order(root->right);
+        in_Order2(root->right);
     }
+}
+
+void AVLtree::Displaytree(shared_ptr<struct AVLnode> root)
+{
+    if (root == NULL)
+    {
+        cout << "Empty Tree" << endl;
+        return;
+    }
+
+    cout << "0>" << root->data << endl;
+    vector<bool> Disp;
+    Disp.push_back(false);
+    if (root->right != NULL)
+    {
+        Disp.push_back(true);
+        Displaytree2(root->right, 0, Disp);
+        Disp.pop_back();
+    }
+    if (root->left != NULL)
+    {
+        Disp.push_back(false);
+        Displaytree2(root->left, 0, Disp);
+        Disp.pop_back();
+    }
+    return;
+}
+
+void AVLtree::Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine)
+{
+
+    for (size_t i = 0; i < (height + 1); i++)
+    {
+        if (DispLine[i] == true)
+        {
+            cout << "|";
+        }
+        else
+        {
+            cout << " ";
+        }
+    }
+
+    if (DispLine[DispLine.size() - 1] == true)
+    {
+        cout << "R";
+    }
+    else
+    {
+        cout << "L";
+    }
+
+    cout << "0>" << root->data << endl;
+
+    if (root->right != NULL)
+    {
+        DispLine.push_back(true);
+        Displaytree2(root->right, height + 1, DispLine);
+        DispLine.pop_back();
+    }
+    if (root->left != NULL)
+    {
+        DispLine.push_back(false);
+        Displaytree2(root->left, height + 1, DispLine);
+        DispLine.pop_back();
+    }
+    return;
 }
 
 shared_ptr<struct AVLnode> AVLtree::getRoot()
