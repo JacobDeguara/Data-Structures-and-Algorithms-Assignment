@@ -7,6 +7,7 @@ using namespace std;
 struct BSnode
 {
     int data;
+    int height;
     shared_ptr<struct BSnode> left;
     shared_ptr<struct BSnode> right;
 };

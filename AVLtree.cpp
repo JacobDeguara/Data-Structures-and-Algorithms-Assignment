@@ -22,8 +22,7 @@ private:
     shared_ptr<struct AVLnode> RLRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> LRRotation(shared_ptr<struct AVLnode> root);
 
-    int Check_Height(shared_ptr<struct AVLnode> root);
-    int Check_Balance(shared_ptr<struct AVLnode> root);
+        int Check_Balance(shared_ptr<struct AVLnode> root);
 
     void Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
     void in_Order2(shared_ptr<struct AVLnode> root);
@@ -35,6 +34,7 @@ public:
     AVLtree(vector<int> ListData);
 
     shared_ptr<struct AVLnode> Insert_Node(shared_ptr<struct AVLnode> root, int data);
+    int Check_Height(shared_ptr<struct AVLnode> root);
 
     shared_ptr<struct AVLnode> getRoot();
     ~AVLtree() = default;

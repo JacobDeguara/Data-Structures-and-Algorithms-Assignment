@@ -99,6 +99,6 @@ int main()
     AVLtree avlTree = AVLtree(Simple);
     avlTree.in_Order(avlTree.getRoot());
     avlTree.Displaytree(avlTree.getRoot());
-
+    cout << avlTree.Check_Height(avlTree.getRoot());
     return 0;
 }
