@@ -31,7 +31,7 @@ public:
     AVLtree(int HeadData);
     AVLtree(vector<int> ListData);
 
-    shared_ptr<struct AVLnode> getRoot();
+    shared_ptr<struct AVLnode> get_Root();
 
     int Check_Balance(shared_ptr<struct AVLnode> root);
     int Check_Height(shared_ptr<struct AVLnode> root);
@@ -128,6 +128,7 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
 {
     if (root == NULL)
         return root;
+
     if (data < root->data)
         root->left = Delete_Node(root->left, data);
     else if (data > root->data)
@@ -140,8 +141,7 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
         }
         else if ((root->left == NULL) || (root->right == NULL))
         {
-            auto temp = root->left ? root->left : root->right;
-            root = temp;
+            root = root->left ? root->left : root->right;
         }
         else
         {
@@ -166,7 +166,7 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
         }
         else if (data > root->left->data)
         {
-            return LRRotation(root);
+            return RLRotation(root);
         }
     }
     if (balance < -1)
@@ -177,7 +177,7 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
         }
         else if (data < root->right->data)
         {
-            return RLRotation(root);
+            return LRRotation(root);
         }
     }
     return root;
@@ -315,7 +315,7 @@ void AVLtree::DisplaytreeRec(shared_ptr<struct AVLnode> root, int height, vector
     return;
 }
 
-shared_ptr<struct AVLnode> AVLtree::getRoot()
+shared_ptr<struct AVLnode> AVLtree::get_Root()
 {
     return root;
 }

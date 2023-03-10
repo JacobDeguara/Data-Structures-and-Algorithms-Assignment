@@ -30,11 +30,10 @@ public:
     void set_Root(shared_ptr<struct BSnode> root);
 
     int Check_Height(shared_ptr<struct BSnode> root);
+    shared_ptr<struct BSnode> MinValue_Node_Search(shared_ptr<struct BSnode> node);
 
-    shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root);
     shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
-
-    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, int Remove);
+    shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root, int Remove);
 
     void Displaytree(shared_ptr<struct BSnode> root);
     void in_Order(shared_ptr<struct BSnode> root);
@@ -86,48 +85,44 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
     return root;
 }
 
-shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
+shared_ptr<struct BSnode> BStree::MinValue_Node_Search(shared_ptr<struct BSnode> node)
 {
-    if (root->right == NULL && root->left == NULL)
-        return NULL;
-
-    if (root->right != NULL && root->left != NULL)
-    {
-        root->data = root->left->data;
-        root->left = Delete_Node(root->left);
-    }
-
-    if (root->right == NULL)
-    {
-        root->data = root->left->data;
-        root->left = Delete_Node(root->left);
-    }
-    else if (root->left == NULL)
-    {
-        root->data = root->right->data;
-        root->right = Delete_Node(root->right);
-    }
-
-    root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
-
-    return root;
+    auto current = node;
+    while (current->left != NULL)
+        current = current->left;
+    return current;
 }
 
-shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, int Remove)
+shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root, int Remove)
 {
-    if (root->left != NULL)
-        Delete_From_List(root->left, Remove);
+    if (root == NULL)
+        return root;
 
-    if (root->right != NULL)
-        Delete_From_List(root->right, Remove);
-
-    if (root != NULL)
+    if (Remove < root->data)
+        root->left = Delete_Node(root->left, Remove);
+    else if (Remove > root->data)
+        root->right = Delete_Node(root->right, Remove);
+    else
     {
-        if (Remove == root->data)
+        if ((root->left == NULL) && (root->right == NULL))
         {
-            root = Delete_Node(root);
+            root = NULL;
+        }
+        else if ((root->left == NULL) || (root->right == NULL))
+        {
+            root = root->left ? root->left : root->right;
+        }
+        else
+        {
+            auto temp = MinValue_Node_Search(root->right);
+            root->data = temp->data;
+            root->right = Delete_Node(root->right, temp->data);
         }
     }
+
+    if (root != NULL)
+        root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
+
     return root;
 }
 

@@ -8,14 +8,7 @@
 #include "AVLtree.cpp"
 #include "RBtree.cpp"
 
-bool compare(int x, int y)
-{
-    if (x == y)
-    {
-        return true;
-    }
-    return false;
-}
+void Simple_test();
 
 int main()
 {
@@ -31,7 +24,6 @@ int main()
     vector<int> ListX;
     vector<int> ListY;
     vector<int> ListZ;
-    vector<int> Simple;
 
     for (size_t i = 0; i < dist13(rngSize); i++)
     {
@@ -57,28 +49,55 @@ int main()
             ListZ[i] = dist33(rngZ);
         }
     }
+
+    // RBtree rbTree = RBtree(12);
+
+    Simple_test();
+
+    return 0;
+}
+
+void Simple_test()
+{
+    std::random_device dev;
+    vector<int> Simple;
     for (size_t i = 0; i < 25; i++)
     {
         Simple.push_back(i);
     }
-
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
-
-    // RBtree rbTree = RBtree(12);
 
     BStree bsTree = BStree(Simple);
     bsTree.in_Order(bsTree.get_Root());
     bsTree.Displaytree(bsTree.get_Root());
     cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
-    /*
-    bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root()));
-    bsTree.in_Order(bsTree.get_Root());
-    */
 
     AVLtree avlTree = AVLtree(Simple);
-    avlTree.in_Order(avlTree.getRoot());
-    avlTree.Displaytree(avlTree.getRoot());
-    cout << "Height :" << avlTree.Check_Height(avlTree.getRoot()) << endl;
+    avlTree.in_Order(avlTree.get_Root());
+    avlTree.Displaytree(avlTree.get_Root());
+    cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
 
-    return 0;
+    shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
+
+    Simple.resize(5);
+
+    for (size_t i = 0; i < Simple.size(); i++)
+    {
+        cout << "Deleting: " << Simple[i] << endl;
+        bsTree.Delete_Node(bsTree.get_Root(), Simple[i]);
+        bsTree.in_Order(bsTree.get_Root());
+    }
+
+    bsTree.Displaytree(bsTree.get_Root());
+    cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
+
+    for (size_t i = 0; i < Simple.size(); i++)
+    {
+        cout << "Deleting: " << Simple[i] << endl;
+        avlTree.Delete_Node(avlTree.get_Root(), Simple[i]);
+        avlTree.in_Order(avlTree.get_Root());
+    }
+
+    avlTree.Displaytree(avlTree.get_Root());
+    cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
 }
