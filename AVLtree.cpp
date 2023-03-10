@@ -22,10 +22,8 @@ private:
     shared_ptr<struct AVLnode> RLRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> LRRotation(shared_ptr<struct AVLnode> root);
 
-    int Check_Balance(shared_ptr<struct AVLnode> root);
-
-    void Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
-    void in_Order2(shared_ptr<struct AVLnode> root);
+    void DisplaytreeRec(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
+    void in_OrderRec(shared_ptr<struct AVLnode> root);
 
 public:
     shared_ptr<struct AVLnode> Create_New_Node(int data);
@@ -33,16 +31,19 @@ public:
     AVLtree(int HeadData);
     AVLtree(vector<int> ListData);
 
-    shared_ptr<struct AVLnode> Insert_Node(shared_ptr<struct AVLnode> root, int data);
-    shared_ptr<struct AVLnode> Delete_Node(shared_ptr<struct AVLnode> root, int data);
+    shared_ptr<struct AVLnode> getRoot();
+
+    int Check_Balance(shared_ptr<struct AVLnode> root);
     int Check_Height(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> MinValue_Node_Search(shared_ptr<struct AVLnode> node);
 
-    shared_ptr<struct AVLnode> getRoot();
-    ~AVLtree() = default;
+    shared_ptr<struct AVLnode> Insert_Node(shared_ptr<struct AVLnode> root, int data);
+    shared_ptr<struct AVLnode> Delete_Node(shared_ptr<struct AVLnode> root, int data);
 
     void Displaytree(shared_ptr<struct AVLnode> root);
     void in_Order(shared_ptr<struct AVLnode> root);
+
+    ~AVLtree() = default;
 };
 
 shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
@@ -228,22 +229,22 @@ int AVLtree::Check_Balance(shared_ptr<struct AVLnode> root)
 void AVLtree::in_Order(shared_ptr<struct AVLnode> root)
 {
     cout << "List;" << endl;
-    in_Order2(root);
+    in_OrderRec(root);
     cout << endl;
 }
 
-void AVLtree::in_Order2(shared_ptr<struct AVLnode> root)
+void AVLtree::in_OrderRec(shared_ptr<struct AVLnode> root)
 {
     if (root->left != NULL)
     {
-        in_Order2(root->left);
+        in_OrderRec(root->left);
     }
 
     cout << root->data << ", ";
 
     if (root->right != NULL)
     {
-        in_Order2(root->right);
+        in_OrderRec(root->right);
     }
 }
 
@@ -261,19 +262,19 @@ void AVLtree::Displaytree(shared_ptr<struct AVLnode> root)
     if (root->right != NULL)
     {
         Disp.push_back(true);
-        Displaytree2(root->right, 0, Disp);
+        DisplaytreeRec(root->right, 0, Disp);
         Disp.pop_back();
     }
     if (root->left != NULL)
     {
         Disp.push_back(false);
-        Displaytree2(root->left, 0, Disp);
+        DisplaytreeRec(root->left, 0, Disp);
         Disp.pop_back();
     }
     return;
 }
 
-void AVLtree::Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine)
+void AVLtree::DisplaytreeRec(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine)
 {
 
     for (size_t i = 0; i < (height + 1); i++)
@@ -302,13 +303,13 @@ void AVLtree::Displaytree2(shared_ptr<struct AVLnode> root, int height, vector<b
     if (root->right != NULL)
     {
         DispLine.push_back(true);
-        Displaytree2(root->right, height + 1, DispLine);
+        DisplaytreeRec(root->right, height + 1, DispLine);
         DispLine.pop_back();
     }
     if (root->left != NULL)
     {
         DispLine.push_back(false);
-        Displaytree2(root->left, height + 1, DispLine);
+        DisplaytreeRec(root->left, height + 1, DispLine);
         DispLine.pop_back();
     }
     return;

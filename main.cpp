@@ -64,28 +64,6 @@ int main()
 
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
-    auto Xtest = std::adjacent_find(ListX.begin(), ListX.end());
-    auto Ytest = std::adjacent_find(ListY.begin(), ListY.end());
-    auto Ztest = std::adjacent_find(ListZ.begin(), ListZ.end());
-
-    if (Xtest != ListX.end())
-    {
-        cerr << "Duplicate elements Found in List X";
-        return -1;
-    }
-
-    if (Ytest != ListY.end())
-    {
-        cerr << "Duplicate elements Found in List Y";
-        return -1;
-    }
-
-    if (Ztest != ListZ.end())
-    {
-        cerr << "Duplicate elements Found in List Z";
-        return -1;
-    }
-
     // RBtree rbTree = RBtree(12);
 
     BStree bsTree = BStree(Simple);

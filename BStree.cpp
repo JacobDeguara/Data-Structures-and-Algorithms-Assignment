@@ -15,47 +15,31 @@ struct BSnode
 class BStree
 {
 private:
-    /* Head node */
     shared_ptr<struct BSnode> root;
 
-    /* Recursive Display with Parameters sone in Displaytree() */
-    void Displaytree2(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine);
-    void in_Order2(shared_ptr<struct BSnode> root);
+    void DisplaytreeRec(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine);
+    void in_OrderRec(shared_ptr<struct BSnode> root);
 
 public:
-    /* Returns a newly created a node */
     shared_ptr<struct BSnode> Create_New_Node(int data);
 
-    /* Constructers that create a tree at root in class */
     BStree(int HeadData);
-    /* Constructers that create a tree at root in class */
     BStree(vector<int> ListData);
 
-    /* Deletes root node */
-    shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root);
-
-    /* Destructer */
-    ~BStree() = default;
-
-    /* Insert new node from head tree */
-    shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
-
-    /* Returns the new tree */
-    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, int Remove);
-
-    /* Displays the tree */
-    void Displaytree(shared_ptr<struct BSnode> root);
-
-    /* Displays the Data in the tree in order */
-    void in_Order(shared_ptr<struct BSnode> root);
-
-    /* Returns the head node*/
     shared_ptr<struct BSnode> get_Root();
-
-    /* Sets the current Head node to whats passed*/
     void set_Root(shared_ptr<struct BSnode> root);
 
     int Check_Height(shared_ptr<struct BSnode> root);
+
+    shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root);
+    shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
+
+    shared_ptr<struct BSnode> Delete_From_List(shared_ptr<struct BSnode> root, int Remove);
+
+    void Displaytree(shared_ptr<struct BSnode> root);
+    void in_Order(shared_ptr<struct BSnode> root);
+
+    ~BStree() = default;
 };
 
 shared_ptr<struct BSnode> BStree::Create_New_Node(int data)
@@ -168,19 +152,19 @@ void BStree::Displaytree(shared_ptr<struct BSnode> root)
     if (root->right != NULL)
     {
         Disp.push_back(true);
-        Displaytree2(root->right, 0, Disp);
+        DisplaytreeRec(root->right, 0, Disp);
         Disp.pop_back();
     }
     if (root->left != NULL)
     {
         Disp.push_back(false);
-        Displaytree2(root->left, 0, Disp);
+        DisplaytreeRec(root->left, 0, Disp);
         Disp.pop_back();
     }
     return;
 }
 
-void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine)
+void BStree::DisplaytreeRec(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine)
 {
 
     for (size_t i = 0; i < (height); i++)
@@ -209,13 +193,13 @@ void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<boo
     if (root->right != NULL)
     {
         DispLine.push_back(true);
-        Displaytree2(root->right, height + 1, DispLine);
+        DisplaytreeRec(root->right, height + 1, DispLine);
         DispLine.pop_back();
     }
     if (root->left != NULL)
     {
         DispLine.push_back(false);
-        Displaytree2(root->left, height + 1, DispLine);
+        DisplaytreeRec(root->left, height + 1, DispLine);
         DispLine.pop_back();
     }
     return;
@@ -224,22 +208,22 @@ void BStree::Displaytree2(shared_ptr<struct BSnode> root, int height, vector<boo
 void BStree::in_Order(shared_ptr<struct BSnode> root)
 {
     cout << "List;" << endl;
-    in_Order2(root);
+    in_OrderRec(root);
     cout << endl;
 }
 
-void BStree::in_Order2(shared_ptr<struct BSnode> root)
+void BStree::in_OrderRec(shared_ptr<struct BSnode> root)
 {
     if (root->left != NULL)
     {
-        in_Order2(root->left);
+        in_OrderRec(root->left);
     }
 
     cout << root->data << ", ";
 
     if (root->right != NULL)
     {
-        in_Order2(root->right);
+        in_OrderRec(root->right);
     }
 }
 
