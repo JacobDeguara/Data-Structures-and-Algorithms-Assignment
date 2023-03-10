@@ -88,8 +88,7 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
     {
         return (Create_New_Node(data));
     }
-
-    if (root->data > data)
+    else if (root->data > data)
     {
         root->left = Insert_New_Node(root->left, data);
     }
@@ -112,22 +111,22 @@ shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root)
     {
         root->data = root->left->data;
         root->left = Delete_Node(root->left);
-        return root;
     }
 
     if (root->right == NULL)
     {
         root->data = root->left->data;
         root->left = Delete_Node(root->left);
-        return root;
     }
     else if (root->left == NULL)
     {
         root->data = root->right->data;
         root->right = Delete_Node(root->right);
-        return root;
     }
-    return NULL;
+
+    root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
+
+    return root;
 }
 
 shared_ptr<struct BSnode> BStree::Delete_From_List(shared_ptr<struct BSnode> root, int Remove)
