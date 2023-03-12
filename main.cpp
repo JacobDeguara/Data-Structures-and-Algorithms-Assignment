@@ -84,7 +84,7 @@ void Simple_test()
     for (size_t i = 0; i < Simple.size(); i++)
     {
         cout << "Deleting: " << Simple[i] << endl;
-        bsTree.Delete_Node(bsTree.get_Root(), Simple[i]);
+        bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root(), Simple[i]));
         bsTree.in_Order(bsTree.get_Root());
     }
 
@@ -94,7 +94,7 @@ void Simple_test()
     for (size_t i = 0; i < Simple.size(); i++)
     {
         cout << "Deleting: " << Simple[i] << endl;
-        avlTree.Delete_Node(avlTree.get_Root(), Simple[i]);
+        avlTree.set_Root(avlTree.Delete_Node(avlTree.get_Root(), Simple[i]));
         avlTree.in_Order(avlTree.get_Root());
     }
 

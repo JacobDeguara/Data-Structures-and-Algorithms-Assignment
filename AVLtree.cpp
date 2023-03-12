@@ -17,10 +17,8 @@ class AVLtree
 private:
     shared_ptr<struct AVLnode> root;
 
-    shared_ptr<struct AVLnode> LLRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> RRRotation(shared_ptr<struct AVLnode> root);
-    shared_ptr<struct AVLnode> RLRotation(shared_ptr<struct AVLnode> root);
-    shared_ptr<struct AVLnode> LRRotation(shared_ptr<struct AVLnode> root);
+    shared_ptr<struct AVLnode> LLRotation(shared_ptr<struct AVLnode> root);
 
     void DisplaytreeRec(shared_ptr<struct AVLnode> root, int height, vector<bool> DispLine);
     void in_OrderRec(shared_ptr<struct AVLnode> root);
@@ -32,6 +30,7 @@ public:
     AVLtree(vector<int> ListData);
 
     shared_ptr<struct AVLnode> get_Root();
+    void set_Root(shared_ptr<struct AVLnode> root);
 
     int Check_Balance(shared_ptr<struct AVLnode> root);
     int Check_Height(shared_ptr<struct AVLnode> root);
@@ -95,22 +94,24 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
     {
         if (data < root->left->data)
         {
-            return LLRotation(root);
+            return RRRotation(root);
         }
         else if (data > root->left->data)
         {
-            return LRRotation(root);
+            root->left = LLRotation(root->left);
+            return RRRotation(root);
         }
     }
     if (balance < -1)
     {
         if (data > root->right->data)
         {
-            return RRRotation(root);
+            return LLRotation(root);
         }
         else if (data < root->right->data)
         {
-            return RLRotation(root);
+            root->right = RRRotation(root->right);
+            return LLRotation(root);
         }
     }
     return root;
@@ -160,56 +161,50 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
 
     if (balance > 1)
     {
-        if (data < root->left->data)
-        {
-            return LLRotation(root);
-        }
-        else if (data > root->left->data)
-        {
-            return RLRotation(root);
-        }
-    }
-    if (balance < -1)
-    {
-        if (data > root->right->data)
+        if (Check_Balance(root->left) >= 0)
         {
             return RRRotation(root);
         }
+        else
+        {
+            root->left = LLRotation(root->left);
+            return RRRotation(root);
+        }
+    }
+    else if (balance < -1)
+    {
+        if (Check_Balance(root->right) <= 0)
+        {
+            return LLRotation(root);
+        }
         else if (data < root->right->data)
         {
-            return LRRotation(root);
+            root->right = RRRotation(root->right);
+            return LLRotation(root);
         }
     }
     return root;
 }
 
-shared_ptr<struct AVLnode> AVLtree::LLRotation(shared_ptr<struct AVLnode> root)
-{
-    auto rootLeft = root->left;
-    root->left = rootLeft->right;
-    rootLeft->right = root;
-    root->height = max(Check_Height(root->left), Check_Height(root->right)) + 1;
-    rootLeft->height = max(Check_Height(rootLeft->left), Check_Height(rootLeft->right)) + 1;
-    return rootLeft;
-}
 shared_ptr<struct AVLnode> AVLtree::RRRotation(shared_ptr<struct AVLnode> root)
 {
-    auto rootRight = root->right;
-    root->right = rootRight->left;
-    rootRight->left = root;
+    auto rootL = root->left;
+    auto rootLR = rootL->right;
+    rootL->right = root;
+    root->left = rootLR;
     root->height = max(Check_Height(root->left), Check_Height(root->right)) + 1;
-    rootRight->height = max(Check_Height(rootRight->left), Check_Height(rootRight->right)) + 1;
-    return rootRight;
+    rootL->height = max(Check_Height(rootL->left), Check_Height(rootL->right)) + 1;
+    return rootL;
 }
-shared_ptr<struct AVLnode> AVLtree::RLRotation(shared_ptr<struct AVLnode> root)
+shared_ptr<struct AVLnode> AVLtree::LLRotation(shared_ptr<struct AVLnode> root)
 {
-    root->right = LLRotation(root->right);
-    return RRRotation(root);
-}
-shared_ptr<struct AVLnode> AVLtree::LRRotation(shared_ptr<struct AVLnode> root)
-{
-    root->left = RRRotation(root->left);
-    return LLRotation(root);
+    auto rootR = root->right;
+    auto rootRL = rootR->left;
+    rootR->left = root;
+    root->right = rootRL;
+    root->height = max(Check_Height(root->left), Check_Height(root->right)) + 1;
+    rootR->height = max(Check_Height(rootR->left), Check_Height(rootR->right)) + 1;
+    return rootR;
 }
 
 int AVLtree::Check_Height(shared_ptr<struct AVLnode> root)
@@ -313,6 +308,11 @@ void AVLtree::DisplaytreeRec(shared_ptr<struct AVLnode> root, int height, vector
         DispLine.pop_back();
     }
     return;
+}
+
+void AVLtree::set_Root(shared_ptr<struct AVLnode> root)
+{
+    this->root = root;
 }
 
 shared_ptr<struct AVLnode> AVLtree::get_Root()
