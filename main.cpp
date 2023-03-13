@@ -77,6 +77,8 @@ void Simple_test()
     avlTree.Displaytree(avlTree.get_Root());
     cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
 
+    RBtree rbTree = RBtree(Simple);
+
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
     Simple.resize(5);
