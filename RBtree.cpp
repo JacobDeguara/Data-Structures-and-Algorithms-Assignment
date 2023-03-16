@@ -13,7 +13,7 @@ enum RB
 struct RBnode
 {
     int data;
-    RB Type;
+    RB type;
     shared_ptr<struct RBnode> parent;
     shared_ptr<struct RBnode> left;
     shared_ptr<struct RBnode> right;
@@ -23,358 +23,508 @@ class RBtree
 {
 private:
     shared_ptr<struct RBnode> root;
+    shared_ptr<struct RBnode> TNULL;
+    shared_ptr<struct RBnode> Create_New_Node(shared_ptr<struct RBnode> node, shared_ptr<struct RBnode> parent);
 
-    shared_ptr<struct RBnode> RRRotation(shared_ptr<struct RBnode> root);
-    shared_ptr<struct RBnode> LLRotation(shared_ptr<struct RBnode> root);
+    void leftRotate(shared_ptr<struct RBnode> x);
+    void rightRotate(shared_ptr<struct RBnode> x);
 
-    void Fix_Tree_Insert(shared_ptr<struct RBnode> root);
-    void LLViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandparent);
-    void RRViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandparent);
-    void RLViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandparent);
-    void LRViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandparent);
+    void Fix_Insert_Tree(shared_ptr<struct RBnode> k);
+
+    void Delete_Node_Rec(shared_ptr<struct RBnode> node, int data);
+    void Fix_Delete_Tree(shared_ptr<struct RBnode> x);
+    void Red_Black_Transplant(shared_ptr<struct RBnode> u, shared_ptr<struct RBnode> v);
+
+    void DisplaytreeRec(shared_ptr<struct RBnode> root, int height, vector<bool> DispLine);
+    void In_Order_Rec(shared_ptr<struct RBnode> node);
 
 public:
-    shared_ptr<struct RBnode> Create_New_Node(int data, RB Type);
-    RBtree(int data);
-    RBtree(vector<int> Listdata);
+    RBtree();
+    RBtree(vector<int> ListData);
 
-    shared_ptr<struct RBnode> get_root();
-    void set_root(shared_ptr<struct RBnode> root);
+    shared_ptr<struct RBnode> minimum(shared_ptr<struct RBnode> node);
 
-    shared_ptr<struct RBnode> Insert_Node(shared_ptr<struct RBnode> root, int data);
-    shared_ptr<struct RBnode> Delete_Node(shared_ptr<struct RBnode> root, int data);
+    void Insert_Node(int data);
+
+    shared_ptr<struct RBnode> get_Root();
+
+    void Delete_Node(int data);
+
+    void Displaytree(shared_ptr<struct RBnode> root);
+    void In_Order();
 
     ~RBtree() = default;
 };
 
-shared_ptr<struct RBnode> RBtree::Create_New_Node(int data, RB Type)
+shared_ptr<struct RBnode> RBtree::Create_New_Node(shared_ptr<struct RBnode> node, shared_ptr<struct RBnode> parent)
 {
     shared_ptr<struct RBnode> temp = make_shared<struct RBnode>();
-    temp->data = data;
-    temp->Type = Type;
-    temp->left = temp->right = temp->parent = NULL;
-    return temp;
+    node->data = 0;
+    node->parent = parent;
+    node->left = NULL;
+    node->right = NULL;
+    node->type = Black;
+    return node;
 }
 
-shared_ptr<struct RBnode> RBtree::Insert_Node(shared_ptr<struct RBnode> root, int data)
+void RBtree::In_Order_Rec(shared_ptr<struct RBnode> node)
 {
-    if (root == NULL)
-        root = Create_New_Node(data, Black);
-    return root;
-
-    auto newNode = Create_New_Node(data, Red);
-    shared_ptr<struct RBnode> parent = NULL;
-    auto currentNode = root;
-
-    while (currentNode != NULL)
+    if (node != TNULL)
     {
-        parent = currentNode;
-        if (data < currentNode->data)
-            currentNode = currentNode->left;
+        In_Order_Rec(node->left);
+        cout << node->data << " ";
+        In_Order_Rec(node->right);
+    }
+}
+
+// For balancing the tree after deletion
+void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> x)
+{
+    shared_ptr<struct RBnode> s;
+    while (x != this->root && x->type == 0)
+    {
+        if (x == x->parent->left)
+        {
+            s = x->parent->right;
+            if (s->type)
+            {
+                s->type = Black;
+                x->parent->type = Red;
+                leftRotate(x->parent);
+                s = x->parent->right;
+            }
+
+            if (s->left->type == 0 && s->right->type == 0)
+            {
+                s->type = Red;
+                x = x->parent;
+            }
+            else
+            {
+                if (s->right->type == 0)
+                {
+                    s->left->type = Black;
+                    s->type = Red;
+                    rightRotate(s);
+                    s = x->parent->right;
+                }
+
+                s->type = x->parent->type;
+                x->parent->type = Black;
+                s->right->type = Black;
+                leftRotate(x->parent);
+                x = this->root;
+            }
+        }
         else
-            currentNode = currentNode->right;
+        {
+            s = x->parent->left;
+            if (s->type)
+            {
+                s->type = Black;
+                x->parent->type = Red;
+                rightRotate(x->parent);
+                s = x->parent->left;
+            }
+
+            if (s->right->type == 0 && s->right->type == 0)
+            {
+                s->type = Red;
+                x = x->parent;
+            }
+            else
+            {
+                if (s->left->type == 0)
+                {
+                    s->right->type = Black;
+                    s->type = Red;
+                    leftRotate(s);
+                    s = x->parent->left;
+                }
+
+                s->type = x->parent->type;
+                x->parent->type = Black;
+                s->left->type = Black;
+                rightRotate(x->parent);
+                x = this->root;
+            }
+        }
     }
+    x->type = Black;
+}
 
-    newNode->parent = parent;
-    if (newNode->data < parent->data)
-        parent->left = newNode;
-    else
-        parent->right = newNode;
-
-    if (newNode->parent->parent == NULL)
+void RBtree::Red_Black_Transplant(shared_ptr<struct RBnode> u, shared_ptr<struct RBnode> v)
+{
+    if (u->parent == NULL)
     {
-        return root;
+        this->root = v;
+    }
+    else if (u == u->parent->left)
+    {
+        u->parent->left = v;
+    }
+    else
+    {
+        u->parent->right = v;
+    }
+    v->parent = u->parent;
+}
+
+void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
+{
+    shared_ptr<struct RBnode> z = TNULL;
+    shared_ptr<struct RBnode> x, y;
+    while (node != TNULL)
+    {
+        if (node->data == data)
+        {
+            z = node;
+        }
+
+        if (node->data <= data)
+        {
+            node = node->right;
+        }
+        else
+        {
+            node = node->left;
+        }
     }
 
-    Fix_Tree_Insert(newNode);
-    return root;
+    if (z == TNULL)
+    {
+        cout << "Key not found in the tree" << endl;
+        return;
+    }
+
+    y = z;
+    int y_original_color = y->type;
+    if (z->left == TNULL)
+    {
+        x = z->right;
+        Red_Black_Transplant(z, z->right);
+    }
+    else if (z->right == TNULL)
+    {
+        x = z->left;
+        Red_Black_Transplant(z, z->left);
+    }
+    else
+    {
+        y = minimum(z->right);
+        y_original_color = y->type;
+        x = y->right;
+        if (y->parent == z)
+        {
+            x->parent = y;
+        }
+        else
+        {
+            Red_Black_Transplant(y, y->right);
+            y->right = z->right;
+            y->right->parent = y;
+        }
+
+        Red_Black_Transplant(z, y);
+        y->left = z->left;
+        y->left->parent = y;
+        y->type = z->type;
+    }
+
+    if (y_original_color == 0)
+    {
+        Fix_Delete_Tree(x);
+    }
 }
 
-shared_ptr<struct RBnode> RBtree::Delete_Node(shared_ptr<struct RBnode> root, int data)
+// For balancing the tree after insertion
+void RBtree::Fix_Insert_Tree(shared_ptr<struct RBnode> k)
 {
-    return NULL;
+    shared_ptr<struct RBnode> u;
+    while (k->parent->type)
+    {
+        if (k->parent == k->parent->parent->right)
+        {
+            u = k->parent->parent->left;
+            if (u->type)
+            {
+                u->type = Black;
+                k->parent->type = Black;
+                k->parent->parent->type = Red;
+                k = k->parent->parent;
+            }
+            else
+            {
+                if (k == k->parent->left)
+                {
+                    k = k->parent;
+                    rightRotate(k);
+                }
+                k->parent->type = Black;
+                k->parent->parent->type = Red;
+                leftRotate(k->parent->parent);
+            }
+        }
+        else
+        {
+            u = k->parent->parent->right;
+
+            if (u->type)
+            {
+                u->type = Black;
+                k->parent->type = Black;
+                k->parent->parent->type = Red;
+                k = k->parent->parent;
+            }
+            else
+            {
+                if (k == k->parent->right)
+                {
+                    k = k->parent;
+                    leftRotate(k);
+                }
+                k->parent->type = Black;
+                k->parent->parent->type = Red;
+                rightRotate(k->parent->parent);
+            }
+        }
+        if (k == this->root)
+        {
+            break;
+        }
+    }
+    this->root->type = Black;
 }
 
-shared_ptr<struct RBnode> RBtree::RRRotation(shared_ptr<struct RBnode> root)
+RBtree::RBtree()
 {
-    auto rootL = root->left;
-    auto rootLR = rootL->right;
-    rootL->right = root;
-    root->left = rootLR;
-    return rootL;
+    TNULL = make_shared<struct RBnode>();
+    TNULL->type = Black;
+    TNULL->left = NULL;
+    TNULL->right = NULL;
+    this->root = TNULL;
 }
 
-shared_ptr<struct RBnode> RBtree::LLRotation(shared_ptr<struct RBnode> root)
+RBtree::RBtree(vector<int> ListData)
 {
-    auto rootR = root->right;
-    auto rootRL = rootR->left;
+    TNULL = make_shared<struct RBnode>();
+    TNULL->type = Black;
+    TNULL->left = NULL;
+    TNULL->right = NULL;
+    this->root = TNULL;
+
+    for (size_t i = 0; i < ListData.size(); i++)
+    {
+        Insert_Node(ListData[i]);
+    }
+}
+
+void RBtree::In_Order()
+{
+    In_Order_Rec(this->root);
+}
+
+shared_ptr<struct RBnode> RBtree::minimum(shared_ptr<struct RBnode> node)
+{
+    while (node->left != TNULL)
+    {
+        node = node->left;
+    }
+    return node;
+}
+
+void RBtree::leftRotate(shared_ptr<struct RBnode> root)
+{
+    shared_ptr<struct RBnode> rootR = root->right;
+    root->right = rootR->left;
+    if (rootR->left != TNULL)
+    {
+        rootR->left->parent = root;
+    }
+    rootR->parent = root->parent;
+    if (root->parent == NULL)
+    {
+        this->root = rootR;
+    }
+    else if (root == root->parent->left)
+    {
+        root->parent->left = rootR;
+    }
+    else
+    {
+        root->parent->right = rootR;
+    }
     rootR->left = root;
-    root->right = rootRL;
-    return rootR;
+    root->parent = rootR;
 }
 
-void RBtree::Fix_Tree_Insert(shared_ptr<struct RBnode> root)
+void RBtree::rightRotate(shared_ptr<struct RBnode> root)
 {
-    shared_ptr<struct RBnode> temp = NULL;
-    auto parent = root->parent;
-    auto grandParent = root->parent->parent;
-
-    if (parent->Type) // Red = True
+    shared_ptr<struct RBnode> rootL = root->left;
+    root->left = rootL->right;
+    if (rootL->right != TNULL)
     {
-        if (parent == grandParent->right) // GrandParent->right == parent
-        {
-            if (root == parent->right) // Parent->right == root
-            {
-                temp = grandParent->left;
-                if (temp != NULL) // GrandParent->left != NULL
-                {
-                    if (temp->Type) // GrandParent->Left->Type is Red
-                    {
-                        if (grandParent->parent != NULL) // is not root
-                        {
-                            grandParent->Type = Red;
-                        }
-                        parent->Type = Black;
-                        temp->Type = Black;
-                    }
-                    else // else GrandParent->Left->Type is Black
-                    {
-                        RRViolation(root, parent, grandParent);
-                    }
-                }
-                else // GrandParent->left == NULL
-                {
-                    RRViolation(root, parent, grandParent);
-                }
-            }
-            else // parent->left == root
-            {
-                temp = grandParent->right;
-                if (temp != NULL) // GrandParent->right != NULL
-                {
-                    if (temp->Type) // GrandParent->Right->Type is Red
-                    {
-                        if (grandParent->parent != NULL) // is not root
-                        {
-                            grandParent->Type = Red;
-                        }
-                        parent->Type = Black;
-                        temp->Type = Black;
-                    }
-                    else // else GrandParent->right->Type is Black
-                    {
-                        RLViolation(root, parent, grandParent);
-                    }
-                }
-                else // GrandParent->right == NULL
-                {
-                    RLViolation(root, parent, grandParent);
-                }
-            }
-        }
-        else if (parent == grandParent->left) // grandParent->left == parent
-        {
-            if (root == parent->left) // parent->left == root
-            {
-                temp = grandParent->right;
-                if (temp != NULL) // if grandParent->right != NULL
-                {
-                    if (temp->Type) // if grandParent-> type == Red
-                    {
-                        if (grandParent->parent != NULL) // is not root
-                        {
-                            grandParent->Type = Red;
-                        }
-                        parent->Type = Black;
-                        temp->Type = Black;
-                    }
-                    else // grandParent->type == Black
-                    {
-                        LLViolation(root, parent, grandParent);
-                    }
-                }
-                else // grandparent->right == NULL
-                {
-                    LLViolation(root, parent, grandParent);
-                }
-            }
-            else if (root == parent->right) // parent->right == root
-            {
-                temp = grandParent->right;
-                if (temp != NULL) // if grandParent->right != NULL
-                {
-                    if (temp->Type) // if grandParent-> type == Red
-                    {
-                        if (grandParent->parent != NULL) // is not root
-                        {
-                            grandParent->Type = Red;
-                        }
-                        parent->Type = Black;
-                        temp->Type = Black;
-                    }
-                    else // grandParent->type == Black
-                    {
-                        LRViolation(root, parent, grandParent);
-                    }
-                }
-                else // grandparent->right == NULL
-                {
-                    LRViolation(root, parent, grandParent);
-                }
-            }
-        }
+        rootL->right->parent = root;
     }
-}
-
-void RBtree::LLViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandParent)
-{
-    if (grandParent->parent == NULL) // is root
+    rootL->parent = root->parent;
+    if (root->parent == NULL)
     {
-        this->root = RRRotation(grandParent);
-
-        grandParent->parent = parent;
-        grandParent->Type = Red;
-        parent->parent = NULL;
-        parent->Type = Black;
+        this->root = rootL;
     }
-    else // is not root
+    else if (root == root->parent->right)
     {
-        auto grandgrandParent = grandParent->parent; // GrandParent's Parent
-        if (grandgrandParent->right == grandParent)  // grandgrandParent->right == grandParent
-        {
-            grandgrandParent->right = RRRotation(grandParent);
-        }
-        else // else  grandgrandParent->left == grandParent
-        {
-            grandgrandParent->left = RRRotation(grandParent);
-        }
-
-        grandParent->parent = parent;
-        grandParent->Type = Red;
-        parent->parent = grandgrandParent;
-        parent->Type = Black;
-    }
-}
-
-void RBtree::RRViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandParent)
-{
-    if (grandParent->parent == NULL) // is root
-    {
-        this->root = LLRotation(grandParent);
-        grandParent->parent = parent;
-        grandParent->Type = Red;
-        parent->parent = NULL;
-        parent->Type = Black;
+        root->parent->right = rootL;
     }
     else
     {
-        auto grandgrandParent = grandParent->parent; // GrandParent's Parent
-        if (grandgrandParent->right == grandParent)  // grandgrandParent->right == grandParent
-        {
-            grandgrandParent->right = LLRotation(grandParent);
-        }
-        else // else  grandgrandParent->left == grandParent
-        {
-            grandgrandParent->left = LLRotation(grandParent);
-        }
-
-        grandParent->parent = parent;
-        grandParent->Type = Red;
-        parent->parent = grandgrandParent;
-        parent->Type = Black;
+        root->parent->left = rootL;
     }
+    rootL->right = root;
+    root->parent = rootL;
 }
-void RBtree::RLViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandParent)
-{
-    if (grandParent->parent == NULL) // is root
-    {
-        grandParent->right = RRRotation(parent);
-        this->root = LLRotation(grandParent);
 
-        grandParent->parent = root;
-        grandParent->Type = Red;
-        parent->parent = root;
-        parent->Type = Red;
-        root->parent = NULL;
-        root->Type = Black;
+// Inserting a node
+void RBtree::Insert_Node(int data)
+{
+    shared_ptr<struct RBnode> node = make_shared<struct RBnode>();
+    node->parent = NULL;
+    node->data = data;
+    node->left = TNULL;
+    node->right = TNULL;
+    node->type = Red;
+
+    shared_ptr<struct RBnode> y = NULL;
+    shared_ptr<struct RBnode> x = this->root;
+
+    while (x != TNULL)
+    {
+        y = x;
+        if (node->data < x->data)
+        {
+            x = x->left;
+        }
+        else
+        {
+            x = x->right;
+        }
+    }
+
+    node->parent = y;
+    if (y == NULL)
+    {
+        this->root = node;
+    }
+    else if (node->data < y->data)
+    {
+        y->left = node;
     }
     else
     {
-        auto grandgrandParent = grandParent->parent; // GrandParent's Parent
-        if (grandgrandParent->right == grandParent)  // grandgrandParent->right == grandParent
-        {
-            grandParent->right = RRRotation(parent);
-            grandgrandParent->right = LLRotation(grandParent);
-        }
-        else // else  grandgrandParent->left == grandParent
-        {
-            grandParent->right = RRRotation(parent);
-            grandgrandParent->left = LLRotation(grandParent);
-        }
-
-        grandParent->parent = root;
-        grandParent->Type = Red;
-        parent->parent = root;
-        parent->Type = Red;
-        root->parent = grandgrandParent;
-        root->Type = Black;
+        y->right = node;
     }
-}
-void RBtree::LRViolation(shared_ptr<struct RBnode> root, shared_ptr<struct RBnode> parent, shared_ptr<struct RBnode> grandParent)
-{
-    if (grandParent->parent == NULL) // is root
+
+    if (node->parent == NULL)
     {
-        grandParent->left = LLRotation(parent);
-        this->root = RRRotation(grandParent);
-
-        grandParent->parent = root;
-        grandParent->Type = Red;
-        parent->parent = root;
-        parent->Type = Red;
-        root->parent = NULL;
-        root->Type = Black;
+        node->type = Black;
+        return;
     }
-    else // is not root
+
+    if (node->parent->parent == NULL)
     {
-        auto grandgrandParent = grandParent->parent; // GrandParent's Parent
-        if (grandgrandParent->right == grandParent)  // grandgrandParent->right == grandParent
-        {
-            grandParent->left = LLRotation(parent);
-            grandgrandParent->right = RRRotation(grandParent);
-        }
-        else // else  grandgrandParent->left == grandParent
-        {
-            grandParent->left = LLRotation(parent);
-            grandgrandParent->left = RRRotation(grandParent);
-        }
-
-        grandParent->parent = root;
-        grandParent->Type = Red;
-        parent->parent = root;
-        parent->Type = Red;
-        root->parent = grandgrandParent;
-        root->Type = Black;
+        return;
     }
+
+    Fix_Insert_Tree(node);
 }
 
-RBtree::RBtree(int data)
-{
-    root = Create_New_Node(data, Black);
-}
-
-RBtree::RBtree(vector<int> Listdata)
-{
-    for (size_t i = 0; i < Listdata.size(); i++)
-    {
-        root = Insert_Node(get_root(), Listdata[i]);
-    }
-}
-
-shared_ptr<struct RBnode> RBtree::get_root()
+shared_ptr<struct RBnode> RBtree::get_Root()
 {
     return this->root;
 }
-void RBtree::set_root(shared_ptr<struct RBnode> root)
+
+void RBtree::Delete_Node(int data)
 {
-    this->root = root;
+    Delete_Node_Rec(this->root, data);
+}
+
+// --------------------------------------------------------
+void RBtree::Displaytree(shared_ptr<struct RBnode> root)
+{
+    if (root == TNULL)
+    {
+        cout << "Empty Tree" << endl;
+        return;
+    }
+
+    if (root->type)
+    {
+        cout << "0> RED: " << root->data << endl;
+    }
+    else
+    {
+        cout << "0> BLK: " << root->data << endl;
+    }
+
+    vector<bool> Disp;
+    Disp.push_back(false);
+    if (root->right != TNULL)
+    {
+        Disp.push_back(true);
+        DisplaytreeRec(root->right, 0, Disp);
+        Disp.pop_back();
+    }
+    if (root->left != TNULL)
+    {
+        Disp.push_back(false);
+        DisplaytreeRec(root->left, 0, Disp);
+        Disp.pop_back();
+    }
+    return;
+}
+
+void RBtree::DisplaytreeRec(shared_ptr<struct RBnode> root, int height, vector<bool> DispLine)
+{
+
+    for (size_t i = 0; i < (height + 1); i++)
+    {
+        if (DispLine[i] == true)
+        {
+            cout << "|";
+        }
+        else
+        {
+            cout << " ";
+        }
+    }
+
+    if (DispLine[DispLine.size() - 1] == true)
+    {
+        cout << "R";
+    }
+    else
+    {
+        cout << "L";
+    }
+
+    if (root->type)
+    {
+        cout << "0> RED :" << root->data << endl;
+    }
+    else
+    {
+        cout << "0> BLK :" << root->data << endl;
+    }
+    if (root->right != TNULL)
+    {
+        DispLine.push_back(true);
+        DisplaytreeRec(root->right, height + 1, DispLine);
+        DispLine.pop_back();
+    }
+    if (root->left != TNULL)
+    {
+        DispLine.push_back(false);
+        DisplaytreeRec(root->left, height + 1, DispLine);
+        DispLine.pop_back();
+    }
+    return;
 }

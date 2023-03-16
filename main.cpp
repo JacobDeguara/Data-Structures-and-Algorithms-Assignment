@@ -67,17 +67,21 @@ void Simple_test()
     }
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
+    cout << "BSTREE: " << endl;
     BStree bsTree = BStree(Simple);
     bsTree.in_Order(bsTree.get_Root());
     bsTree.Displaytree(bsTree.get_Root());
     cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
 
+    cout << "AVLTREE: " << endl;
     AVLtree avlTree = AVLtree(Simple);
     avlTree.in_Order(avlTree.get_Root());
     avlTree.Displaytree(avlTree.get_Root());
     cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
 
+    cout << "RBTREE: " << endl;
     RBtree rbTree = RBtree(Simple);
+    rbTree.Displaytree(rbTree.get_Root());
 
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
