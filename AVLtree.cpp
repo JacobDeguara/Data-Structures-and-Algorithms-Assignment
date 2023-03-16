@@ -48,6 +48,17 @@ public:
 
     int Node_Amount(shared_ptr<struct AVLnode> root);
 
+    bool Search(shared_ptr<struct AVLnode> root, int CompValue)
+    {
+        if (root == NULL)
+            return false;
+        if (root->data == CompValue)
+            return true;
+        if (root->data < CompValue)
+            return Search(root->right, CompValue);
+        return Search(root->left, CompValue);
+    }
+
     ~AVLtree() = default;
 };
 
@@ -382,15 +393,13 @@ int AVLtree::get_Comparsion()
 
 int AVLtree::Node_Amount(shared_ptr<struct AVLnode> root)
 {
-    int count = 0;
-    if (root->right != NULL)
+    if (root == NULL)
     {
-        count += Node_Amount(root->right);
+        return 0;
     }
 
-    if (root->left != NULL)
-    {
-        count += Node_Amount(root->left);
-    }
-    return count + 1;
+    int left = Node_Amount(root->left);
+    int right = Node_Amount(root->right);
+
+    return right + left + 1;
 }

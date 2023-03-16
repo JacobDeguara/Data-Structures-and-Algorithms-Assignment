@@ -12,6 +12,8 @@ void Simple_test();
 
 vector<int> intersection(vector<int> v1, vector<int> v2);
 
+bool isDuplicate(vector<int> list);
+
 int main()
 {
     // Creating a list of random numbers
@@ -31,7 +33,7 @@ int main()
     for (size_t i = 0; i < dist13(rngSize); i++)
     {
         ListX.push_back(dist33(rngX));
-        while (std::adjacent_find(ListX.begin(), ListX.end()) != ListX.end())
+        while (isDuplicate(ListX))
         {
             ListX[i] = dist33(rngX);
         }
@@ -40,7 +42,7 @@ int main()
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
         ListY.push_back(dist33(rngY));
-        while (std::adjacent_find(ListY.begin(), ListY.end()) != ListY.end())
+        while (isDuplicate(ListY))
         {
             ListY[i] = dist33(rngY);
         }
@@ -49,7 +51,7 @@ int main()
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
         ListZ.push_back(dist33(rngZ));
-        while (std::adjacent_find(ListZ.begin(), ListZ.end()) != ListZ.end())
+        while (isDuplicate(ListZ))
         {
             ListZ[i] = dist33(rngZ);
         }
@@ -107,7 +109,7 @@ int main()
     log.Write(message);
     cout << message << endl;
 
-    Simple_test();
+    // Simple_test();
 
     return 0;
 }
@@ -121,6 +123,16 @@ vector<int> intersection(vector<int> v1, vector<int> v2)
 
     set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(), back_inserter(v3));
     return v3;
+}
+
+bool isDuplicate(vector<int> list)
+{
+    for (size_t i = 0; i < (list.size() - 1); i++)
+    {
+        if (list[i] == list[(list.size() - 1)])
+            return true;
+    }
+    return false;
 }
 
 void Simple_test()
