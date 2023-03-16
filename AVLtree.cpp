@@ -42,6 +42,7 @@ public:
 
     shared_ptr<struct AVLnode> Insert_Node(shared_ptr<struct AVLnode> root, int data);
     shared_ptr<struct AVLnode> Delete_Node(shared_ptr<struct AVLnode> root, int data);
+    void Delete_List(vector<int> ListData);
 
     void Displaytree(shared_ptr<struct AVLnode> root);
     void in_Order(shared_ptr<struct AVLnode> root);
@@ -50,6 +51,7 @@ public:
 
     bool Search(shared_ptr<struct AVLnode> root, int CompValue)
     {
+        this->comparsions += 1;
         if (root == NULL)
             return false;
         if (root->data == CompValue)
@@ -402,4 +404,12 @@ int AVLtree::Node_Amount(shared_ptr<struct AVLnode> root)
     int right = Node_Amount(root->right);
 
     return right + left + 1;
+}
+
+void AVLtree::Delete_List(vector<int> ListData)
+{
+    for (size_t i = 0; i < ListData.size(); i++)
+    {
+        this->root = Delete_Node(this->root, ListData[i]);
+    }
 }

@@ -36,11 +36,24 @@ public:
 
     shared_ptr<struct BSnode> Insert_New_Node(shared_ptr<struct BSnode> root, int data);
     shared_ptr<struct BSnode> Delete_Node(shared_ptr<struct BSnode> root, int Remove);
+    void Delete_List(vector<int> ListData);
 
     void Displaytree(shared_ptr<struct BSnode> root);
     void in_Order(shared_ptr<struct BSnode> root);
 
     int Node_Amount(shared_ptr<struct BSnode> root);
+
+    bool Search(shared_ptr<struct BSnode> root, int CompValue)
+    {
+        this->comparsions += 1;
+        if (root == NULL)
+            return false;
+        if (root->data == CompValue)
+            return true;
+        if (root->data < CompValue)
+            return Search(root->right, CompValue);
+        return Search(root->left, CompValue);
+    }
 
     ~BStree() = default;
 };
@@ -276,4 +289,12 @@ int BStree::Node_Amount(shared_ptr<struct BSnode> root)
         count += Node_Amount(root->left);
     }
     return count + 1;
+}
+
+void BStree::Delete_List(vector<int> ListData)
+{
+    for (size_t i = 0; i < ListData.size(); i++)
+    {
+        this->root = Delete_Node(this->root, ListData[i]);
+    }
 }

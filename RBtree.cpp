@@ -54,6 +54,7 @@ public:
     int get_Rotation();
     int get_Comparsion();
 
+    void Delete_List(vector<int> ListData);
     void Delete_Node(int data);
 
     void Displaytree(shared_ptr<struct RBnode> root);
@@ -61,6 +62,18 @@ public:
 
     int Check_Height(shared_ptr<struct RBnode> root);
     int Node_Amount(shared_ptr<struct RBnode> root);
+
+    bool Search(shared_ptr<struct RBnode> root, int CompValue)
+    {
+        this->comparsions += 1;
+        if (root == NULL)
+            return false;
+        if (root->data == CompValue)
+            return true;
+        if (root->data < CompValue)
+            return Search(root->right, CompValue);
+        return Search(root->left, CompValue);
+    }
 
     ~RBtree() = default;
 };
@@ -212,7 +225,6 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
 
     if (rootZ == TNULL)
     {
-        cout << "Key not found in the tree" << endl;
         return;
     }
     this->comparsions += 1;
@@ -627,4 +639,12 @@ int RBtree::Node_Amount(shared_ptr<struct RBnode> root)
         count += Node_Amount(root->left);
     }
     return count + 1;
+}
+
+void RBtree::Delete_List(vector<int> ListData)
+{
+    for (size_t i = 0; i < ListData.size(); i++)
+    {
+        Delete_Node(ListData[i]);
+    }
 }

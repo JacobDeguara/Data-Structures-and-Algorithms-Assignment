@@ -109,6 +109,95 @@ int main()
     log.Write(message);
     cout << message << endl;
 
+    int BSTree_Comparsions_Amount = bsTree.get_Comparsion();
+    int AVLTree_Comparsions_Amount = avlTree.get_Comparsion();
+    int RBTree_Comparsions_Amount = rbTree.get_Comparsion();
+
+    int AVLTree_Rotations_Amount = avlTree.get_Rotation();
+    int RBTree_Rotations_Amount = rbTree.get_Rotation();
+    cout << endl;
+
+    // Deleteing ListY from each tree
+
+    bsTree.Delete_List(ListY);
+    avlTree.Delete_List(ListY);
+    rbTree.Delete_List(ListY);
+
+    message = "AVL: " + to_string(avlTree.get_Rotation() - AVLTree_Rotations_Amount) + " tot. rotations req." +
+              ", height is " + to_string(avlTree.Check_Height(avlTree.get_Root())) +
+              ", #nodes is " + to_string(avlTree.Node_Amount(avlTree.get_Root())) +
+              ", #comparisons is " + to_string(avlTree.get_Comparsion() - AVLTree_Comparsions_Amount) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "RBT: " + to_string(rbTree.get_Rotation() - RBTree_Rotations_Amount) + " tot. rotations req." +
+              ", height is " + to_string(rbTree.Check_Height(rbTree.get_Root())) +
+              ", #nodes is " + to_string(rbTree.Node_Amount(rbTree.get_Root())) +
+              ", #comparisons is " + to_string(rbTree.get_Comparsion() - RBTree_Comparsions_Amount) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "BST: height is " + to_string(bsTree.Check_Height(bsTree.get_Root())) +
+              ", #nodes is " + to_string(bsTree.Node_Amount(bsTree.get_Root())) +
+              ", #comparisons is " + to_string(bsTree.get_Comparsion() - BSTree_Comparsions_Amount) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    BSTree_Comparsions_Amount = bsTree.get_Comparsion();
+    AVLTree_Comparsions_Amount = avlTree.get_Comparsion();
+    RBTree_Comparsions_Amount = rbTree.get_Comparsion();
+
+    AVLTree_Rotations_Amount = avlTree.get_Rotation();
+    RBTree_Rotations_Amount = rbTree.get_Rotation();
+    cout << endl;
+
+    // Search for ListZ values in tree
+    int BSTree_Found_Value;
+    int BSTree_Not_Found_Value;
+    int AVLTree_Found_Value;
+    int AVLTree_Not_Found_Value;
+    int RBTree_Found_Value;
+    int RBTree_Not_Found_Value;
+
+    for (size_t i = 0; i < ListZ.size(); i++)
+    {
+        if (bsTree.Search(bsTree.get_Root(), ListZ[i]))
+            BSTree_Found_Value++;
+        else
+            BSTree_Not_Found_Value++;
+
+        if (avlTree.Search(avlTree.get_Root(), ListZ[i]))
+            AVLTree_Found_Value++;
+        else
+            AVLTree_Not_Found_Value++;
+
+        if (rbTree.Search(rbTree.get_Root(), ListZ[i]))
+            RBTree_Found_Value++;
+        else
+            RBTree_Not_Found_Value++;
+    }
+
+    message = "AVL: " +
+              to_string(avlTree.get_Comparsion() - AVLTree_Comparsions_Amount) + " total comparisons required, " +
+              to_string(AVLTree_Found_Value) + " numbers found, " +
+              to_string(AVLTree_Not_Found_Value) + " numbers not found.";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "RBT: " +
+              to_string(rbTree.get_Comparsion() - RBTree_Comparsions_Amount) + " total comparisons required, " +
+              to_string(RBTree_Found_Value) + " numbers found, " +
+              to_string(RBTree_Not_Found_Value) + " numbers not found.";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "BST: " +
+              to_string(bsTree.get_Comparsion() - BSTree_Comparsions_Amount) + " total comparisons required, " +
+              to_string(BSTree_Found_Value) + " numbers found, " +
+              to_string(BSTree_Not_Found_Value) + " numbers not found.";
+    log.Write(message);
+    cout << message << endl;
+
     // Simple_test();
 
     return 0;
