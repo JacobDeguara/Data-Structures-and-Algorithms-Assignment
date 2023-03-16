@@ -16,6 +16,8 @@ class AVLtree
 {
 private:
     shared_ptr<struct AVLnode> root;
+    int comparsions;
+    int rotations;
 
     shared_ptr<struct AVLnode> RRRotation(shared_ptr<struct AVLnode> root);
     shared_ptr<struct AVLnode> LLRotation(shared_ptr<struct AVLnode> root);
@@ -30,6 +32,8 @@ public:
     AVLtree(vector<int> ListData);
 
     shared_ptr<struct AVLnode> get_Root();
+    int get_Rotation();
+    int get_Comparsion();
     void set_Root(shared_ptr<struct AVLnode> root);
 
     int Check_Balance(shared_ptr<struct AVLnode> root);
@@ -41,6 +45,8 @@ public:
 
     void Displaytree(shared_ptr<struct AVLnode> root);
     void in_Order(shared_ptr<struct AVLnode> root);
+
+    int Node_Amount(shared_ptr<struct AVLnode> root);
 
     ~AVLtree() = default;
 };
@@ -56,14 +62,18 @@ shared_ptr<struct AVLnode> AVLtree::Create_New_Node(int data)
 
 AVLtree::AVLtree(int HeadData)
 {
+    rotations = 0;
+    comparsions = 0;
     root = Create_New_Node(HeadData);
 }
 
 AVLtree::AVLtree(vector<int> ListData)
 {
+    rotations = 0;
+    comparsions = 0;
     for (size_t i = 0; i < ListData.size(); i++)
     {
-        root = Insert_Node(root, ListData[i]);
+        this->root = Insert_Node(this->root, ListData[i]);
     }
 }
 
@@ -71,18 +81,22 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
 {
     if (root == NULL)
     {
+        this->comparsions += 1;
         return (Create_New_Node(data));
     }
     else if (data > root->data)
     {
+        this->comparsions += 2;
         root->right = Insert_Node(root->right, data);
     }
     else if (data < root->data)
     {
+        this->comparsions += 3;
         root->left = Insert_Node(root->left, data);
     }
     else
     {
+        this->comparsions += 3;
         return root;
     }
 
@@ -94,10 +108,12 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
     {
         if (data < root->left->data)
         {
+            this->comparsions += 2;
             return RRRotation(root);
         }
         else if (data > root->left->data)
         {
+            comparsions += 3;
             root->left = LLRotation(root->left);
             return RRRotation(root);
         }
@@ -106,14 +122,17 @@ shared_ptr<struct AVLnode> AVLtree::Insert_Node(shared_ptr<struct AVLnode> root,
     {
         if (data > root->right->data)
         {
+            this->comparsions += 3;
             return LLRotation(root);
         }
         else if (data < root->right->data)
         {
+            comparsions += 4;
             root->right = RRRotation(root->right);
             return LLRotation(root);
         }
     }
+    this->comparsions += 2;
     return root;
 }
 
@@ -121,31 +140,47 @@ shared_ptr<struct AVLnode> AVLtree::MinValue_Node_Search(shared_ptr<struct AVLno
 {
     auto current = node;
     while (current->left != NULL)
+    {
+        this->comparsions += 1;
         current = current->left;
+        comparsions++;
+    }
     return current;
 }
 
 shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root, int data)
 {
     if (root == NULL)
+    {
+        this->comparsions += 1;
         return root;
+    }
 
     if (data < root->data)
+    {
+        comparsions += 2;
         root->left = Delete_Node(root->left, data);
+    }
     else if (data > root->data)
+    {
+        comparsions += 3;
         root->right = Delete_Node(root->right, data);
+    }
     else
     {
         if ((root->left == NULL) && (root->right == NULL))
         {
+            this->comparsions += 4;
             root = NULL;
         }
         else if ((root->left == NULL) || (root->right == NULL))
         {
+            this->comparsions += 6;
             root = root->left ? root->left : root->right;
         }
         else
         {
+            this->comparsions += 5;
             auto temp = MinValue_Node_Search(root->right); // min?
             root->data = temp->data;
             root->right = Delete_Node(root->right, temp->data);
@@ -153,7 +188,11 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
     }
 
     if (root == NULL)
+    {
+        this->comparsions += 1;
         return root;
+    }
+    this->comparsions += 1;
 
     // Update balance
     root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
@@ -163,10 +202,12 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
     {
         if (Check_Balance(root->left) >= 0)
         {
+            this->comparsions += 2;
             return RRRotation(root);
         }
         else
         {
+            this->comparsions += 2;
             root->left = LLRotation(root->left);
             return RRRotation(root);
         }
@@ -175,19 +216,24 @@ shared_ptr<struct AVLnode> AVLtree::Delete_Node(shared_ptr<struct AVLnode> root,
     {
         if (Check_Balance(root->right) <= 0)
         {
+            this->comparsions += 3;
             return LLRotation(root);
         }
-        else if (data < root->right->data)
+        else
         {
+            this->comparsions += 3;
             root->right = RRRotation(root->right);
             return LLRotation(root);
         }
     }
+    this->comparsions += 2;
     return root;
 }
 
 shared_ptr<struct AVLnode> AVLtree::RRRotation(shared_ptr<struct AVLnode> root)
 {
+    rotations++;
+
     auto rootL = root->left;
     auto rootLR = rootL->right;
     rootL->right = root;
@@ -198,6 +244,8 @@ shared_ptr<struct AVLnode> AVLtree::RRRotation(shared_ptr<struct AVLnode> root)
 }
 shared_ptr<struct AVLnode> AVLtree::LLRotation(shared_ptr<struct AVLnode> root)
 {
+    rotations++;
+
     auto rootR = root->right;
     auto rootRL = rootR->left;
     rootR->left = root;
@@ -211,6 +259,7 @@ int AVLtree::Check_Height(shared_ptr<struct AVLnode> root)
 {
     if (root == NULL)
         return 0;
+    this->comparsions += 1;
     return root->height;
 }
 
@@ -218,6 +267,7 @@ int AVLtree::Check_Balance(shared_ptr<struct AVLnode> root)
 {
     if (root == NULL)
         return 0;
+    this->comparsions += 1;
     return Check_Height(root->left) - Check_Height(root->right);
 }
 
@@ -318,4 +368,29 @@ void AVLtree::set_Root(shared_ptr<struct AVLnode> root)
 shared_ptr<struct AVLnode> AVLtree::get_Root()
 {
     return root;
+}
+
+int AVLtree::get_Rotation()
+{
+    return this->rotations;
+}
+
+int AVLtree::get_Comparsion()
+{
+    return this->comparsions;
+}
+
+int AVLtree::Node_Amount(shared_ptr<struct AVLnode> root)
+{
+    int count = 0;
+    if (root->right != NULL)
+    {
+        count += Node_Amount(root->right);
+    }
+
+    if (root->left != NULL)
+    {
+        count += Node_Amount(root->left);
+    }
+    return count + 1;
 }

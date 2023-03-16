@@ -24,6 +24,9 @@ class RBtree
 private:
     shared_ptr<struct RBnode> root;
     shared_ptr<struct RBnode> TNULL;
+    int comparsions;
+    int rotations;
+
     shared_ptr<struct RBnode> Create_New_Node(shared_ptr<struct RBnode> node, shared_ptr<struct RBnode> parent);
 
     void leftRotate(shared_ptr<struct RBnode> rootX);
@@ -48,6 +51,8 @@ public:
     void Insert_Node(int data);
 
     shared_ptr<struct RBnode> get_Root();
+    int get_Rotation();
+    int get_Comparsion();
 
     void Delete_Node(int data);
 
@@ -55,6 +60,7 @@ public:
     void In_Order();
 
     int Check_Height(shared_ptr<struct RBnode> root);
+    int Node_Amount(shared_ptr<struct RBnode> root);
 
     ~RBtree() = default;
 };
@@ -75,7 +81,7 @@ void RBtree::In_Order_Rec(shared_ptr<struct RBnode> node)
     if (node != TNULL)
     {
         In_Order_Rec(node->left);
-        cout << node->data << " ";
+        cout << node->data << ", ";
         In_Order_Rec(node->right);
     }
 }
@@ -85,6 +91,7 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
     shared_ptr<struct RBnode> rootS;
     while (rootX != this->root && rootX->type == 0)
     {
+        this->comparsions += 1;
         if (rootX == rootX->parent->left)
         {
             rootS = rootX->parent->right;
@@ -110,6 +117,7 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
                     rightRotate(rootS);
                     rootS = rootX->parent->right;
                 }
+                this->comparsions += 1;
 
                 rootS->type = rootX->parent->type;
                 rootX->parent->type = Black;
@@ -117,6 +125,7 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
                 leftRotate(rootX->parent);
                 rootX = this->root;
             }
+            this->comparsions += 2;
         }
         else
         {
@@ -128,6 +137,7 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
                 rightRotate(rootX->parent);
                 rootS = rootX->parent->left;
             }
+            this->comparsions += 1;
 
             if (rootS->right->type == 0 && rootS->right->type == 0)
             {
@@ -143,6 +153,7 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
                     leftRotate(rootS);
                     rootS = rootX->parent->left;
                 }
+                this->comparsions += 1;
 
                 rootS->type = rootX->parent->type;
                 rootX->parent->type = Black;
@@ -150,7 +161,9 @@ void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
                 rightRotate(rootX->parent);
                 rootX = this->root;
             }
+            this->comparsions += 1;
         }
+        this->comparsions += 1;
     }
     rootX->type = Black;
 }
@@ -160,13 +173,16 @@ void RBtree::Red_Black_Transplant(shared_ptr<struct RBnode> rootU, shared_ptr<st
     if (rootU->parent == NULL)
     {
         this->root = rootV;
+        this->comparsions += 1;
     }
     else if (rootU == rootU->parent->left)
     {
+        this->comparsions += 2;
         rootU->parent->left = rootV;
     }
     else
     {
+        this->comparsions += 2;
         rootU->parent->right = rootV;
     }
     rootV->parent = rootU->parent;
@@ -191,6 +207,7 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
         {
             node = node->left;
         }
+        this->comparsions += 3;
     }
 
     if (rootZ == TNULL)
@@ -198,21 +215,26 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
         cout << "Key not found in the tree" << endl;
         return;
     }
+    this->comparsions += 1;
 
     rootY = rootZ;
     int y_original_color = rootY->type;
     if (rootZ->left == TNULL)
     {
+        this->comparsions += 1;
         rootX = rootZ->right;
         Red_Black_Transplant(rootZ, rootZ->right);
     }
     else if (rootZ->right == TNULL)
     {
+        this->comparsions += 2;
         rootX = rootZ->left;
         Red_Black_Transplant(rootZ, rootZ->left);
     }
     else
     {
+        this->comparsions += 2;
+
         rootY = minimum(rootZ->right);
         y_original_color = rootY->type;
         rootX = rootY->right;
@@ -226,6 +248,7 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
             rootY->right = rootZ->right;
             rootY->right->parent = rootY;
         }
+        this->comparsions += 1;
 
         Red_Black_Transplant(rootZ, rootY);
         rootY->left = rootZ->left;
@@ -235,6 +258,7 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
 
     if (y_original_color == 0)
     {
+        this->comparsions += 1;
         Fix_Delete_Tree(rootX);
     }
 }
@@ -244,6 +268,7 @@ void RBtree::Fix_Insert_Tree(shared_ptr<struct RBnode> rootK)
     shared_ptr<struct RBnode> rootU;
     while (rootK->parent->type)
     {
+        this->comparsions += 1;
         if (rootK->parent == rootK->parent->parent->right)
         {
             rootU = rootK->parent->parent->left;
@@ -261,10 +286,12 @@ void RBtree::Fix_Insert_Tree(shared_ptr<struct RBnode> rootK)
                     rootK = rootK->parent;
                     rightRotate(rootK);
                 }
+                this->comparsions += 1;
                 rootK->parent->type = Black;
                 rootK->parent->parent->type = Red;
                 leftRotate(rootK->parent->parent);
             }
+            this->comparsions += 2;
         }
         else
         {
@@ -284,21 +311,28 @@ void RBtree::Fix_Insert_Tree(shared_ptr<struct RBnode> rootK)
                     rootK = rootK->parent;
                     leftRotate(rootK);
                 }
+                this->comparsions += 1;
                 rootK->parent->type = Black;
                 rootK->parent->parent->type = Red;
                 rightRotate(rootK->parent->parent);
             }
+            this->comparsions += 2;
         }
         if (rootK == this->root)
         {
+            this->comparsions += 1;
             break;
         }
+        this->comparsions += 1;
     }
     this->root->type = Black;
 }
 
 RBtree::RBtree()
 {
+    rotations = 0;
+    comparsions = 0;
+
     TNULL = make_shared<struct RBnode>();
     TNULL->type = Black;
     TNULL->left = NULL;
@@ -308,6 +342,8 @@ RBtree::RBtree()
 
 RBtree::RBtree(vector<int> ListData)
 {
+    rotations = 0;
+    comparsions = 0;
     TNULL = make_shared<struct RBnode>();
     TNULL->type = Black;
     TNULL->left = NULL;
@@ -329,6 +365,7 @@ shared_ptr<struct RBnode> RBtree::minimum(shared_ptr<struct RBnode> node)
 {
     while (node->left != TNULL)
     {
+        this->comparsions += 1;
         node = node->left;
     }
     return node;
@@ -336,6 +373,7 @@ shared_ptr<struct RBnode> RBtree::minimum(shared_ptr<struct RBnode> node)
 
 void RBtree::leftRotate(shared_ptr<struct RBnode> root)
 {
+    this->rotations++;
     shared_ptr<struct RBnode> rootR = root->right;
     root->right = rootR->left;
     if (rootR->left != TNULL)
@@ -357,10 +395,13 @@ void RBtree::leftRotate(shared_ptr<struct RBnode> root)
     }
     rootR->left = root;
     root->parent = rootR;
+
+    rotations++;
 }
 
 void RBtree::rightRotate(shared_ptr<struct RBnode> root)
 {
+    this->rotations++;
     shared_ptr<struct RBnode> rootL = root->left;
     root->left = rootL->right;
     if (rootL->right != TNULL)
@@ -382,6 +423,8 @@ void RBtree::rightRotate(shared_ptr<struct RBnode> root)
     }
     rootL->right = root;
     root->parent = rootL;
+
+    rotations++;
 }
 
 void RBtree::Insert_Node(int data)
@@ -398,6 +441,7 @@ void RBtree::Insert_Node(int data)
 
     while (rootX != TNULL)
     {
+        this->comparsions += 2;
         rootY = rootX;
         if (node->data < rootX->data)
         {
@@ -413,26 +457,32 @@ void RBtree::Insert_Node(int data)
     if (rootY == NULL)
     {
         this->root = node;
+        this->comparsions += 1;
     }
     else if (node->data < rootY->data)
     {
         rootY->left = node;
+        this->comparsions += 2;
     }
     else
     {
         rootY->right = node;
+        this->comparsions += 2;
     }
 
     if (node->parent == NULL)
     {
+        this->comparsions += 1;
         node->type = Black;
         return;
     }
-
+    this->comparsions += 1;
     if (node->parent->parent == NULL)
     {
+        this->comparsions += 1;
         return;
     }
+    this->comparsions += 1;
 
     Fix_Insert_Tree(node);
 }
@@ -440,6 +490,15 @@ void RBtree::Insert_Node(int data)
 shared_ptr<struct RBnode> RBtree::get_Root()
 {
     return this->root;
+}
+
+int RBtree::get_Rotation()
+{
+    return this->rotations;
+}
+int RBtree::get_Comparsion()
+{
+    return this->comparsions;
 }
 
 void RBtree::Delete_Node(int data)
@@ -553,4 +612,19 @@ int RBtree::Check_Height_Rec(shared_ptr<struct RBnode> root, int current)
         return current;
     }
     return max(maxR, maxL);
+}
+
+int RBtree::Node_Amount(shared_ptr<struct RBnode> root)
+{
+    int count = 0;
+    if (root->right != TNULL)
+    {
+        count += Node_Amount(root->right);
+    }
+
+    if (root->left != TNULL)
+    {
+        count += Node_Amount(root->left);
+    }
+    return count + 1;
 }

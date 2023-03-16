@@ -16,6 +16,7 @@ class BStree
 {
 private:
     shared_ptr<struct BSnode> root;
+    int comparsions;
 
     void DisplaytreeRec(shared_ptr<struct BSnode> root, int height, vector<bool> DispLine);
     void in_OrderRec(shared_ptr<struct BSnode> root);
@@ -27,6 +28,7 @@ public:
     BStree(vector<int> ListData);
 
     shared_ptr<struct BSnode> get_Root();
+    int get_Comparsion();
     void set_Root(shared_ptr<struct BSnode> root);
 
     int Check_Height(shared_ptr<struct BSnode> root);
@@ -37,6 +39,8 @@ public:
 
     void Displaytree(shared_ptr<struct BSnode> root);
     void in_Order(shared_ptr<struct BSnode> root);
+
+    int Node_Amount(shared_ptr<struct BSnode> root);
 
     ~BStree() = default;
 };
@@ -52,11 +56,13 @@ shared_ptr<struct BSnode> BStree::Create_New_Node(int data)
 
 BStree::BStree(int HeadData)
 {
+    comparsions = 0;
     root = Create_New_Node(HeadData);
 }
 
 BStree::BStree(vector<int> ListData)
 {
+    comparsions = 0;
     root = Create_New_Node(ListData[0]);
 
     for (size_t i = 1; i < ListData.size(); i++)
@@ -69,14 +75,17 @@ shared_ptr<struct BSnode> BStree::Insert_New_Node(shared_ptr<struct BSnode> root
 {
     if (root == NULL)
     {
+        this->comparsions += 1;
         return (Create_New_Node(data));
     }
     else if (root->data > data)
     {
+        this->comparsions += 2;
         root->left = Insert_New_Node(root->left, data);
     }
     else
     {
+        this->comparsions += 2;
         root->right = Insert_New_Node(root->right, data);
     }
 
@@ -89,31 +98,47 @@ shared_ptr<struct BSnode> BStree::MinValue_Node_Search(shared_ptr<struct BSnode>
 {
     auto current = node;
     while (current->left != NULL)
+    {
+        this->comparsions += 1;
         current = current->left;
+    }
     return current;
 }
 
 shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root, int Remove)
 {
     if (root == NULL)
+    {
+        this->comparsions += 1;
         return root;
+    }
 
     if (Remove < root->data)
+    {
+        this->comparsions += 2;
         root->left = Delete_Node(root->left, Remove);
+    }
     else if (Remove > root->data)
+    {
+        this->comparsions += 3;
         root->right = Delete_Node(root->right, Remove);
+    }
     else
     {
+        this->comparsions += 3;
         if ((root->left == NULL) && (root->right == NULL))
         {
+            this->comparsions += 1;
             root = NULL;
         }
         else if ((root->left == NULL) || (root->right == NULL))
         {
+            this->comparsions += 3;
             root = root->left ? root->left : root->right;
         }
         else
         {
+            this->comparsions += 2;
             auto temp = MinValue_Node_Search(root->right);
             root->data = temp->data;
             root->right = Delete_Node(root->right, temp->data);
@@ -122,7 +147,7 @@ shared_ptr<struct BSnode> BStree::Delete_Node(shared_ptr<struct BSnode> root, in
 
     if (root != NULL)
         root->height = 1 + max(Check_Height(root->left), Check_Height(root->right));
-
+    this->comparsions += 1;
     return root;
 }
 
@@ -130,6 +155,7 @@ int BStree::Check_Height(shared_ptr<struct BSnode> root)
 {
     if (root == NULL)
         return 0;
+    this->comparsions += 1;
     return root->height;
 }
 
@@ -230,4 +256,24 @@ void BStree::set_Root(shared_ptr<struct BSnode> root)
 shared_ptr<struct BSnode> BStree::get_Root()
 {
     return root;
+}
+
+int BStree::get_Comparsion()
+{
+    return this->comparsions;
+}
+
+int BStree::Node_Amount(shared_ptr<struct BSnode> root)
+{
+    int count = 0;
+    if (root->right != NULL)
+    {
+        count += Node_Amount(root->right);
+    }
+
+    if (root->left != NULL)
+    {
+        count += Node_Amount(root->left);
+    }
+    return count + 1;
 }

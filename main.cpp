@@ -80,13 +80,34 @@ int main()
     message = "Sets X and Z have " + to_string(IntersectionXZ.size()) + " values in common";
     log.Write(message);
     cout << message << endl;
+    cout << endl;
 
     // Inserting ListX into each tree
     BStree bsTree = BStree(ListX);
     AVLtree avlTree = AVLtree(ListX);
     RBtree rbTree = RBtree(ListX);
 
-        // Simple_test();
+    message = "AVL: " + to_string(avlTree.get_Rotation()) + " tot. rotations req." +
+              ", height is " + to_string(avlTree.Check_Height(avlTree.get_Root())) +
+              ", #nodes is " + to_string(avlTree.Node_Amount(avlTree.get_Root())) +
+              ", #comparisons is " + to_string(avlTree.get_Comparsion()) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "RBT: " + to_string(rbTree.get_Rotation()) + " tot. rotations req." +
+              ", height is " + to_string(rbTree.Check_Height(rbTree.get_Root())) +
+              ", #nodes is " + to_string(rbTree.Node_Amount(rbTree.get_Root())) +
+              ", #comparisons is " + to_string(rbTree.get_Comparsion()) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "BST: height is " + to_string(bsTree.Check_Height(bsTree.get_Root())) +
+              ", #nodes is " + to_string(bsTree.Node_Amount(bsTree.get_Root())) +
+              ", #comparisons is " + to_string(bsTree.get_Comparsion()) + ".";
+    log.Write(message);
+    cout << message << endl;
+
+    Simple_test();
 
     return 0;
 }
@@ -112,52 +133,20 @@ void Simple_test()
     }
     shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
 
-    cout << "BSTREE: " << endl;
     BStree bsTree = BStree(Simple);
     bsTree.in_Order(bsTree.get_Root());
-    bsTree.Displaytree(bsTree.get_Root());
-    cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
 
-    cout << "AVLTREE: " << endl;
+    cout << "Amount of Nodes:" + to_string(bsTree.Node_Amount(bsTree.get_Root())) << endl;
+
     AVLtree avlTree = AVLtree(Simple);
     avlTree.in_Order(avlTree.get_Root());
-    avlTree.Displaytree(avlTree.get_Root());
-    cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
 
-    cout << "RBTREE: " << endl;
+    cout << "Amount of Nodes:" + to_string(avlTree.Node_Amount(avlTree.get_Root())) << endl;
+
     RBtree rbTree = RBtree(Simple);
-    rbTree.Displaytree(rbTree.get_Root());
+    cout << "List;" << endl;
+    rbTree.In_Order();
+    cout << endl;
 
-    shuffle(Simple.begin(), Simple.end(), default_random_engine(dev()));
-
-    Simple.resize(5);
-
-    for (size_t i = 0; i < Simple.size(); i++)
-    {
-        cout << "Deleting: " << Simple[i] << endl;
-        bsTree.set_Root(bsTree.Delete_Node(bsTree.get_Root(), Simple[i]));
-        bsTree.in_Order(bsTree.get_Root());
-    }
-
-    bsTree.Displaytree(bsTree.get_Root());
-    cout << "Height :" << bsTree.Check_Height(bsTree.get_Root()) << endl;
-
-    for (size_t i = 0; i < Simple.size(); i++)
-    {
-        cout << "Deleting: " << Simple[i] << endl;
-        avlTree.set_Root(avlTree.Delete_Node(avlTree.get_Root(), Simple[i]));
-        avlTree.in_Order(avlTree.get_Root());
-    }
-
-    avlTree.Displaytree(avlTree.get_Root());
-    cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
-
-    for (size_t i = 0; i < Simple.size(); i++)
-    {
-        cout << "Deleting: " << Simple[i] << endl;
-        rbTree.Delete_Node(Simple[i]);
-        rbTree.In_Order();
-        cout << endl;
-    }
-    rbTree.Displaytree(rbTree.get_Root());
+    cout << "Amount of Nodes:" + to_string(rbTree.Node_Amount(rbTree.get_Root())) << endl;
 }
