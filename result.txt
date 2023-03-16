@@ -1,6 +1,0 @@
-Current time: Thu Mar 16 16:03:11 2023
-Set X contains 1081 integers
-Set Y contains 532 integers
-Set Z contains 548 integers
-Sets X and Y have 84 values in common
-Sets X and Z have 90 values in common
