@@ -81,7 +81,12 @@ int main()
     log.Write(message);
     cout << message << endl;
 
-    // Simple_test();
+    // Inserting ListX into each tree
+    BStree bsTree = BStree(ListX);
+    AVLtree avlTree = AVLtree(ListX);
+    RBtree rbTree = RBtree(ListX);
+
+        // Simple_test();
 
     return 0;
 }

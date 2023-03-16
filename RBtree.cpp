@@ -37,6 +37,7 @@ private:
 
     void DisplaytreeRec(shared_ptr<struct RBnode> root, int height, vector<bool> DispLine);
     void In_Order_Rec(shared_ptr<struct RBnode> node);
+    int Check_Height_Rec(shared_ptr<struct RBnode> root, int current);
 
 public:
     RBtree();
@@ -52,6 +53,8 @@ public:
 
     void Displaytree(shared_ptr<struct RBnode> root);
     void In_Order();
+
+    int Check_Height(shared_ptr<struct RBnode> root);
 
     ~RBtree() = default;
 };
@@ -523,4 +526,31 @@ void RBtree::DisplaytreeRec(shared_ptr<struct RBnode> root, int height, vector<b
         DispLine.pop_back();
     }
     return;
+}
+
+int RBtree::Check_Height(shared_ptr<struct RBnode> root)
+{
+    return Check_Height_Rec(root, 1);
+}
+
+int RBtree::Check_Height_Rec(shared_ptr<struct RBnode> root, int current)
+{
+    int maxR = 0;
+    int maxL = 0;
+
+    if (root->right != NULL)
+    {
+        maxR = Check_Height_Rec(root->right, current + 1);
+    }
+
+    if (root->left != NULL)
+    {
+        maxL = Check_Height_Rec(root->left, current + 1);
+    }
+
+    if (current > max(maxR, maxL))
+    {
+        return current;
+    }
+    return max(maxR, maxL);
 }
