@@ -77,7 +77,6 @@ void RBtree::In_Order_Rec(shared_ptr<struct RBnode> node)
     }
 }
 
-// For balancing the tree after deletion
 void RBtree::Fix_Delete_Tree(shared_ptr<struct RBnode> rootX)
 {
     shared_ptr<struct RBnode> rootS;
@@ -237,7 +236,6 @@ void RBtree::Delete_Node_Rec(shared_ptr<struct RBnode> node, int data)
     }
 }
 
-// For balancing the tree after insertion
 void RBtree::Fix_Insert_Tree(shared_ptr<struct RBnode> rootK)
 {
     shared_ptr<struct RBnode> rootU;
@@ -383,7 +381,6 @@ void RBtree::rightRotate(shared_ptr<struct RBnode> root)
     root->parent = rootL;
 }
 
-// Inserting a node
 void RBtree::Insert_Node(int data)
 {
     shared_ptr<struct RBnode> node = make_shared<struct RBnode>();

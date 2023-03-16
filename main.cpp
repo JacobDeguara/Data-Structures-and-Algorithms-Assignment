@@ -10,8 +10,11 @@
 
 void Simple_test();
 
+vector<int> intersection(vector<int> v1, vector<int> v2);
+
 int main()
 {
+    // Creating a list of random numbers
     std::random_device dev;
     std::mt19937 rngX(dev());
     std::mt19937 rngY(dev());
@@ -33,6 +36,7 @@ int main()
             ListX[i] = dist33(rngX);
         }
     }
+
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
         ListY.push_back(dist33(rngY));
@@ -41,6 +45,7 @@ int main()
             ListY[i] = dist33(rngY);
         }
     }
+
     for (size_t i = 0; i < dist51(rngSize); i++)
     {
         ListZ.push_back(dist33(rngZ));
@@ -50,11 +55,46 @@ int main()
         }
     }
 
-    // RBtree rbTree = RBtree(12);
+    // Log size of lists and intersection
+    string message;
+    Log log = Log("result.txt");
 
-    Simple_test();
+    message = "Set X contains " + to_string(ListX.size()) + " integers";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "Set Y contains " + to_string(ListY.size()) + " integers";
+    log.Write(message);
+    cout << message << endl;
+
+    message = "Set Z contains " + to_string(ListZ.size()) + " integers";
+    log.Write(message);
+    cout << message << endl;
+
+    auto IntersectionXY = intersection(ListX, ListY);
+    message = "Sets X and Y have " + to_string(IntersectionXY.size()) + " values in common";
+    log.Write(message);
+    cout << message << endl;
+
+    auto IntersectionXZ = intersection(ListX, ListZ);
+    message = "Sets X and Z have " + to_string(IntersectionXZ.size()) + " values in common";
+    log.Write(message);
+    cout << message << endl;
+
+    // Simple_test();
 
     return 0;
+}
+
+vector<int> intersection(vector<int> v1, vector<int> v2)
+{
+    vector<int> v3;
+
+    sort(v1.begin(), v1.end());
+    sort(v2.begin(), v2.end());
+
+    set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(), back_inserter(v3));
+    return v3;
 }
 
 void Simple_test()
@@ -106,4 +146,13 @@ void Simple_test()
 
     avlTree.Displaytree(avlTree.get_Root());
     cout << "Height :" << avlTree.Check_Height(avlTree.get_Root()) << endl;
+
+    for (size_t i = 0; i < Simple.size(); i++)
+    {
+        cout << "Deleting: " << Simple[i] << endl;
+        rbTree.Delete_Node(Simple[i]);
+        rbTree.In_Order();
+        cout << endl;
+    }
+    rbTree.Displaytree(rbTree.get_Root());
 }
